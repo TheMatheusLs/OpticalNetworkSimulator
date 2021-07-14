@@ -73,6 +73,25 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
 	 */
 	private List<Double> frequencies;
 	/**
+     * @brief Cost of this link, based in the 
+     * selected metric
+     */
+    double cost;
+	/**
+     * @brief Boolean variable to indicate the  link state.
+     */
+    boolean linkState;
+    /**
+     * @brief Link utilization value. This parameter is determined by the number
+     * of times the link was used by all the routes for all node pairs.
+     */
+    int utilization;
+    /**
+     * @brief Link use. This parameter is updated each time a connection uses
+     * the link in the allocation path.
+     */
+    int use;
+	/**
 	 * Construtor da classe.
 	 * @param source
 	 * @param destination
@@ -92,6 +111,12 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
 		this.booster = new OpticalAmplifier();
 		this.spans = this.configureSpansInLink(length);
 		this.inicializePowersAndFrequencies(ParametersSimulation.getNumberOfSlotsPerLink());
+
+		this.cost = 0.0;
+        this.linkState = true;
+        this.utilization = 0;
+        this.use = 0;
+
 	}
 
 	@Override
@@ -101,6 +126,30 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
 
 		return txt;
 	}
+
+	public boolean isLinkWorking(){
+        return this.linkState;
+    }
+
+	public void setLinkState(Boolean linkState) {
+        this.linkState = linkState;
+    }
+
+	public int getOriginNode(){
+        return this.source;
+    }
+
+    public int getDestinationNode(){
+        return this.destination;
+    }
+
+	public double getCost(){
+        return this.cost;
+    }
+
+	public void setCost(double cost){
+        this.cost = cost;
+    }
 
 	/**
 	 * M�todo para retornar o identificador do optical link.
@@ -329,8 +378,7 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
 	 * @author Andr� 			
 	 */	
 	private void addSpansInLink(final int spanId, final double spanSize, final List<OpticalSpan> spans){
-		final SimulationParameters parameters = new SimulationParameters();
-		spans.add(new OpticalSpan (spanId,parameters.getNumberOfSlots(),new OpticalFiber(spanSize),new OpticalAmplifier()));		
+		spans.add(new OpticalSpan (spanId, ParametersSimulation.getNumberOfSlotsPerLink(), new OpticalFiber(spanSize),new OpticalAmplifier()));		
 	}	
 	/**
 	 * M�todo para configurar o ganho do amplificador.
@@ -518,9 +566,8 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
 	 */	
 	public List<Integer> getAvailableSlots(){		   
 		final List<Integer> availSlotsList = new ArrayList<Integer>();
-		final SimulationParameters parameters = new SimulationParameters();
 		availSlotsList.clear();	   
-		for(int i=0;i<parameters.getNumberOfSlots();i++){
+		for(int i=0; i < ParametersSimulation.getNumberOfSlotsPerLink() ;i++){
 			if(this.availableSlot(i)){
 				availSlotsList.add(i);
 			}
@@ -561,13 +608,12 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
 	 * @author Andr� 			
 	 */		
 	public void eraseOpticalLink(){
-		
-		final SimulationParameters parameters = new SimulationParameters();		
-		this.powersA = new ArrayList<Double>(parameters.getNumberOfSlots());
-		this.powersB = new ArrayList<Double>(parameters.getNumberOfSlots());
-		this.frequencies = new ArrayList<Double>(parameters.getNumberOfSlots());
+			
+		this.powersA = new ArrayList<Double>(ParametersSimulation.getNumberOfSlotsPerLink());
+		this.powersB = new ArrayList<Double>(ParametersSimulation.getNumberOfSlotsPerLink());
+		this.frequencies = new ArrayList<Double>(ParametersSimulation.getNumberOfSlotsPerLink());
 		   
-		for(int i=0;i<parameters.getNumberOfSlots();i++){			   
+		for(int i=0;i<ParametersSimulation.getNumberOfSlotsPerLink();i++){			   
 			this.powersA.add(0.0);
 			this.powersB.add(0.0);
 			this.frequencies.add(SimulationParameters.getFinalFrequency()-((i+1)*SimulationParameters.getSpacing()));	   			

@@ -53,8 +53,7 @@ public final class GainAlgorithm {
 	private void configureGainInLink(final OpticalLink link) {
 		
 		final List<OpticalSpan> spans = getSpansList(link);
-		final int spansSize = getSpansSize(spans);												// Quantidade de Span
-		final SimulationParameters parameters = new SimulationParameters();		
+		final int spansSize = getSpansSize(spans);												// Quantidade de Span	
 		final double fiberLoss = -link.getLength()* SimulationParameters.getFiberAtenuationCoefficient();	// km * (dB/ Km)  = dB
 		final double connectorsLoss = (double) (spansSize*(-2.0 * SimulationParameters.getDioLoss()));		// dB
 		final double nodesLoss = - SimulationParameters.getMuxLoss() * 2.0 - SimulationParameters.getSwitchLoss();		// dB
@@ -62,7 +61,7 @@ public final class GainAlgorithm {
 		final double numberOfAmpl = (double) (spansSize+1);										// Quantidade de amplificadores
 		
 		final double gain = totalLoss/numberOfAmpl;												// dB
-		final double noiseFactorIndB = parameters.getNoiseFigureIndB();							// dB
+		final double noiseFactorIndB = SimulationParameters.getNoiseFigureIndB();							// dB
 		
 		
 		//configure the booster

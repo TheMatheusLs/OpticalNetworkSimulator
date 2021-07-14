@@ -58,6 +58,30 @@ public class OpticalSwitch {
         return String.format("Node Id: %d", this.opticalSwitchId);
     }
 
+	public boolean isNodeWorking(){
+        return this.nodeWorking;
+    }
+
+	public boolean isEquals(OpticalSwitch right){
+        if (this.opticalSwitchId == right.opticalSwitchId){
+            return true;
+        }
+    
+        return false;
+    }
+
+	public void addNeighborNode(OpticalSwitch node){
+        this.neighborNodes.add(node);
+    }
+
+	public int getNodeId(){
+        return this.opticalSwitchId;
+    }
+
+	public void setNodeState(boolean nodeWorking){
+        this.nodeWorking = nodeWorking;
+    }
+
     /**
 	 * Construtor da classe.
 	 * @param opticalSwitchId

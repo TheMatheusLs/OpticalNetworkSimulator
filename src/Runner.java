@@ -14,7 +14,7 @@ public class Runner {
         Simulation simulation = new Simulation();
         simulation.initialize(folderToSave);
 
-
+        simulation.simulateSingle(ParametersSimulation.minLoadNetwork);
 
         final long geralEndTime = System.currentTimeMillis();
 

@@ -42,11 +42,6 @@ public class SimulationParameters {
 	 * @author Andr� 
 	 */
 	private static final double ATENU_COEFFIC = -0.23;
-	/**
-	 * N�mero de canais na rede.
-	 * @author Andr� 
-	 */
-	private static final int NUMBER_SLOTS = 64;
 	//Span parameters
 	/**
 	 * Tamanho do span.
@@ -95,7 +90,7 @@ public class SimulationParameters {
 	 * M�todo para retornar a figura de ru�do.
 	 * @author Andr� 
 	 */
-	public double getNoiseFigureIndB() {
+	public static double getNoiseFigureIndB() {
 		return NOISE_FIGURE;
 	}
 	/**
@@ -184,24 +179,17 @@ public class SimulationParameters {
 		return PLANCK;
 	}
 	/**
-	 * M�todo para retornar o n�mero de slots.
-	 * @author Andr� 
-	 */
-	public int getNumberOfSlots() {
-		return NUMBER_SLOTS;
-	}
-	/**
 	 * M�todo para retornar o tempo m�ximo.
 	 * @author Andr� 
 	 */
-	public double getMaxTime() {
+	public static double getMaxTime() {
 		return MAX_TIME;
 	}
 	/**
 	 * M�todo para retornar a taxa m�dia de dura��o da chamada.
 	 * @author Andr� 
 	 */
-	public double getMeanRateOfCallsDuration() {
+	public static double getMeanRateOfCallsDuration() {
 		return MEAN_RATE;
 	}
 }

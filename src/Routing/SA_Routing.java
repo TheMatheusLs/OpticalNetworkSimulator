@@ -4,7 +4,6 @@ import java.util.List;
 
 import src.ParametersSimulation;
 import src.GeneralClasses.Function;
-import src.Spectrum.FirstFit;
 import src.Types.ModulationLevelType;
 
 public class SA_Routing {

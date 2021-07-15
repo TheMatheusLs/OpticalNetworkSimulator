@@ -23,7 +23,7 @@ public class Routing {
 
         RoutingAlgorithmType routingOption = ParametersSimulation.getRoutingAlgorithmType();
         
-        if (routingOption.equals(ParametersSimulation.RoutingAlgorithmType.YEN)){
+        if (routingOption.equals(ParametersSimulation.RoutingAlgorithmType.YEN) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.MSCLSequencial) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.MSCLCombinado)){
             this.K = ParametersSimulation.getKShortestRoutes();
         } else{
             this.K = 1;
@@ -35,7 +35,7 @@ public class Routing {
             if (routingOption.equals(ParametersSimulation.RoutingAlgorithmType.Dijstra)){
                 this.Dijkstra();
             } else {
-                if (routingOption.equals(ParametersSimulation.RoutingAlgorithmType.YEN)){
+                if (routingOption.equals(ParametersSimulation.RoutingAlgorithmType.YEN) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.MSCLSequencial) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.MSCLCombinado)){
                     this.YEN();
                 } else {
                     throw new Exception("Invalid offline routing option");
@@ -199,7 +199,7 @@ public class Routing {
         
         RoutingAlgorithmType routingOption = ParametersSimulation.getRoutingAlgorithmType();
 
-        if (routingOption.equals(ParametersSimulation.RoutingAlgorithmType.Dijstra) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.YEN)){
+        if (routingOption.equals(ParametersSimulation.RoutingAlgorithmType.Dijstra) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.YEN) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.MSCLSequencial) || routingOption.equals(ParametersSimulation.RoutingAlgorithmType.MSCLCombinado)){
             return true;
         } else {
             return false;

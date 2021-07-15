@@ -14,11 +14,11 @@ public class ParametersSimulation{
     final static double minLoadNetwork = 240;
     final static double maxLoadNetwork = 300;
     final static int numberOfPointsLoadNetwork = 6;
-    final static int numberOfSimulationsPerLoadNetwork = 10;
+    final static int numberOfSimulationsPerLoadNetwork = 1;
 
     final static int numberOfSlotsPerLink = 128;
     final static long maxNumberOfRequisitions = (long) 1e6;
-    final static int maxNumberOfBlockedRequests = 500;
+    final static int maxNumberOfBlockedRequests = 1000;
 
     final static int kShortestRoutes = 3;
     
@@ -34,9 +34,9 @@ public class ParametersSimulation{
     final static int[] trafficOption = new int[]{100, 200, 400};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
-    final static RSAOrder RSAOrderType = RSAOrder.SA_Routing;
-    final static GAOption GAOptionType = GAOption.GADisabled;
-    final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
+    final static RSAOrder RSAOrderType = RSAOrder.Disable;
+    final static GAOption GAOptionType = GAOption.GAHRSAEnable;
+    final static StopCriteria stopCriteria = StopCriteria.BlockedCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
 
@@ -155,12 +155,15 @@ public class ParametersSimulation{
 
     public enum RoutingAlgorithmType{
         Dijstra,
-        YEN;
+        YEN,
+        MSCLSequencial,
+        MSCLCombinado;
     }
 
     public enum SpectralAllocationAlgorithmType{
         Random,
-        FirstFit;
+        FirstFit,
+        MSCL;
     }
 
     public enum LinkCostType{
@@ -182,11 +185,14 @@ public class ParametersSimulation{
     public enum RSAOrder{
         Routing_SA,
         SA_Routing,
-        MixedOrderGA;
+        MixedOrderGA,
+        Disable;
     }
 
     public enum GAOption{
-        GADisabled;
+        GADisabled,
+        GAHRSAEnable,
+        GAHHRSAEnable;
     }
 
     public enum StopCriteria{

@@ -7,6 +7,7 @@ import src.Structure.Topology.Topology;
 import src.Routing.Routing;
 import src.Routing.Routing_SA;
 import src.Routing.SA_Routing;
+import src.Routing.MSCL;
 import src.Routing.Route;
 import src.Save.CreateFolder;
 import src.Spectrum.FirstFit;
@@ -15,6 +16,9 @@ import src.CallRequest.CallRequestList;
 import src.CallRequest.CallRequest;
 import src.Parameters.SimulationParameters;
 import src.GeneralClasses.Function;
+import src.GeneticAlgorithm.Config;
+import src.GeneticAlgorithm.Individual;
+import src.Routing.HHRSAAlgorithm;
 
 import java.util.Random;
 
@@ -48,6 +52,8 @@ public class Simulation {
             for (int nSim = 0; nSim < ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                 seedsForLoad[nSim] = randomAux.nextInt(Integer.MAX_VALUE);
             }
+
+            this.randomGeneration = new Random(ParametersSimulation.getMainSeed());
         } else {
             if (ParametersSimulation.getRandomGeneration().equals(ParametersSimulation.RandomGeneration.SameRequestForAllPoints)){
 
@@ -58,6 +64,8 @@ public class Simulation {
                 for (int nSim = 0; nSim < ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                     seedsForLoad[nSim] = seedFix;
                 }
+
+                this.randomGeneration = new Random(ParametersSimulation.getMainSeed());
             } else {
                 if (ParametersSimulation.getRandomGeneration().equals(ParametersSimulation.RandomGeneration.RandomGeneration)){
                     Random randomAux = new Random();
@@ -73,8 +81,12 @@ public class Simulation {
     }
 
     public void simulateMultiLoad() throws Exception{
+        
+        double step = 0; 
+        if (ParametersSimulation.getNumberOfPointSloadNetwork() >= 2){
+            step = (ParametersSimulation.getMaxLoadNetwork() - ParametersSimulation.getMinLoadNetwork()) / (ParametersSimulation.getNumberOfPointSloadNetwork() - 1);
+        }
 
-        double step = (ParametersSimulation.getMaxLoadNetwork() - ParametersSimulation.getMinLoadNetwork()) / (ParametersSimulation.getNumberOfPointSloadNetwork() - 1);
 
         for (int loadPoint = 0; loadPoint < ParametersSimulation.getNumberOfPointSloadNetwork(); loadPoint++){
             double networkLoad = ParametersSimulation.getMaxLoadNetwork() - (step * loadPoint);
@@ -144,11 +156,38 @@ public class Simulation {
             // Captura as rotas para o par origem destino
 			List<Route> routeSolution = this.routing.getRoutesForOD(source, destination);
             Route route = null;
+            List<Integer> slots = new ArrayList<>();
             if (ParametersSimulation.getRSAOrder().equals(ParametersSimulation.RSAOrder.Routing_SA)){
                 route = Routing_SA.findRoute(routeSolution, bitRate);
             } else {
                 if (ParametersSimulation.getRSAOrder().equals(ParametersSimulation.RSAOrder.SA_Routing)){
                     route = SA_Routing.findRoute(routeSolution, bitRate);
+                } else {
+                    if (ParametersSimulation.getRSAOrder().equals(ParametersSimulation.RSAOrder.Disable) && ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.MSCL) && ParametersSimulation.getRoutingAlgorithmType().equals(ParametersSimulation.RoutingAlgorithmType.MSCLSequencial)){
+
+                        MSCL mscl = new MSCL(routeSolution, bitRate);
+
+                        if (mscl.Sequencial()){
+                            slots = mscl.getSlots();
+
+                            if(!slots.isEmpty()){
+                                route = mscl.getRoute();
+                            }
+                        }
+                    } else {
+                        if (ParametersSimulation.getRSAOrder().equals(ParametersSimulation.RSAOrder.Disable) && ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.MSCL) && ParametersSimulation.getRoutingAlgorithmType().equals(ParametersSimulation.RoutingAlgorithmType.MSCLCombinado)){
+
+                            MSCL mscl = new MSCL(routeSolution, bitRate);
+    
+                            if (mscl.Combinado()){
+                                slots = mscl.getSlots();
+    
+                                if(!slots.isEmpty()){
+                                    route = mscl.getRoute();
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -160,7 +199,9 @@ public class Simulation {
 				
                 callRequest.setRequiredNumberOfSlots(reqNumbOfSlots);
 
-                List<Integer> slots = FirstFit.findFrequencySlots(ParametersSimulation.getNumberOfSlotsPerLink(), reqNumbOfSlots, route.getUpLink(), route.getDownLink());
+                if (ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.FirstFit)){
+                    slots = FirstFit.findFrequencySlots(ParametersSimulation.getNumberOfSlotsPerLink(), reqNumbOfSlots, route.getUpLink(), route.getDownLink());
+                } 
 
                 if(!slots.isEmpty() && slots.size() == reqNumbOfSlots){	// NOPMD by Andr� on 13/06/17 13:12
 					hasSlots = true;
@@ -212,6 +253,118 @@ public class Simulation {
 		}
 		return new double[]{-1,-1};
     }
+
+
+    public double[] doSimulateGA(Individual individual) throws Exception{
+
+        final long geralInitTime = System.currentTimeMillis();
+
+        int source;
+		int destination;
+		int	numBlockBySlots = 0;
+		int numBlockByQoT = 0; 
+		double time = 0.0;
+        long limitCallRequest = 0;
+
+        final CallRequestList listOfCalls = new CallRequestList();
+        final double meanRateCallDur = SimulationParameters.getMeanRateOfCallsDuration();
+
+        LOOP_REQ : for(int i = 1; i <= ParametersSimulation.getMaxNumberOfRequisitions(); i++){
+
+			boolean hasSlots = false; 
+            boolean hasQoT = false;
+
+            do{
+                source = (int) Math.floor(randomGeneration.nextDouble() * this.topology.getNumNodes());				
+                destination = (int) Math.floor(randomGeneration.nextDouble() * this.topology.getNumNodes());				
+            }while(source == destination);
+
+            listOfCalls.removeCallRequest(time);
+
+            time += Function.exponentialDistribution(Config.networkLoadGATraining, this.randomGeneration);
+
+            final CallRequest callRequest = new CallRequest(i, ParametersSimulation.getTrafficOption(), ParametersSimulation.getCallRequestType());
+
+            callRequest.setSourceId(source);
+			callRequest.setDestinationId(destination);
+			callRequest.setReqID(i);
+
+            callRequest.setTime(time, 1/meanRateCallDur, this.randomGeneration);
+            callRequest.sortBitRate(randomGeneration);
+            int bitRate = callRequest.getBitRate();
+
+            // Captura as rotas para o par origem destino
+			List<Route> routeSolution = this.routing.getRoutesForOD(source, destination);
+            Route route = null;
+            List<Integer> slots = new ArrayList<>();
+            
+            if (ParametersSimulation.getGaOption().equals(ParametersSimulation.GAOption.GAHHRSAEnable) || ParametersSimulation.getGaOption().equals(ParametersSimulation.GAOption.GAHRSAEnable)){
+                route = HHRSAAlgorithm.findRouteSolution(routeSolution, bitRate, individual, source, destination, topology.getNumNodes());
+            }
+
+            if (route != null){
+
+                callRequest.setModulationType(ParametersSimulation.getMudulationLevelType()[0]);
+                
+                final int reqNumbOfSlots = Function.getNumberSlots(callRequest.getModulationType(), callRequest.getBitRate());
+				
+                callRequest.setRequiredNumberOfSlots(reqNumbOfSlots);
+
+                if (ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.FirstFit)){
+                    slots = FirstFit.findFrequencySlots(ParametersSimulation.getNumberOfSlotsPerLink(), reqNumbOfSlots, route.getUpLink(), route.getDownLink());
+                } 
+
+                if(!slots.isEmpty() && slots.size() == reqNumbOfSlots){	// NOPMD by Andr� on 13/06/17 13:12
+					hasSlots = true;
+				}
+
+                if (ParametersSimulation.getPhysicalLayerOption().equals(ParametersSimulation.PhysicalLayerOption.Disabled)){
+                    hasQoT = true;
+                }
+
+				if(hasSlots && hasQoT){
+					callRequest.setFrequencySlots(slots);
+					callRequest.setRoute(route);
+
+					// Incrementar os slots que estão sendo utilizados pelas rotas
+					route.incrementSlotsOcupy(slots);
+
+					callRequest.allocate(route.getUpLink(), route.getDownLink(), topology.getListOfNodes());
+					listOfCalls.addCall(callRequest);
+				}
+            }
+
+            if(!hasSlots){
+				numBlockBySlots++;
+			}else if(!hasQoT){
+				numBlockByQoT++; 
+			}
+
+            limitCallRequest = i;
+
+            if (ParametersSimulation.getStopCriteria().equals(ParametersSimulation.StopCriteria.BlockedCallRequest)){
+                if ((numBlockBySlots + numBlockByQoT) >= 1000){
+                    break LOOP_REQ;
+                }
+            }
+        }
+
+        listOfCalls.desallocateAllRequests(); // Remove todas as requisições alocadas
+
+        this.checkTopologyAndRouting();
+
+        listOfCalls.eraseCallList();
+
+		final long geralFinalTime = System.currentTimeMillis();
+
+		if (limitCallRequest != 0){
+            double PB = (double)(numBlockBySlots + numBlockByQoT) / limitCallRequest;
+			System.err.println("Erros Slots: " + numBlockBySlots + " Erros QoT: " + numBlockByQoT + " numReq: " + limitCallRequest + " PB: " + PB);
+			return new double[] {PB, (double)(geralFinalTime - geralInitTime) /1000} ;
+		}
+		return new double[]{-1,-1};
+    }
+
 
     void checkTopologyAndRouting() throws Exception{
         // Verifica se todos os links estão limpos

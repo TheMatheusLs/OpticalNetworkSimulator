@@ -7,6 +7,7 @@ import src.Routing.Route;
 import src.Routing.Routing;
 import src.Structure.OpticalSwitch;
 import src.Structure.Topology.Topology;
+import src.ParametersSimulation;
 
 public class YEN {
 
@@ -24,8 +25,8 @@ public class YEN {
         Route newRoute = Dijkstra.findRoute(orNode, deNode, topology, routing);
         routesYEN.add(newRoute);
         
-        //for(int k = 1; k < this.K; k++){
-        for(int k = 1; k < 200; k++){
+        //for(int k = 1; k < ParametersSimulation.getKShortestRoutes(); k++){
+        for(int k = 1; k < 250; k++){
             int auxSize = routesYEN.get(k-1).getNumNodes() - 2;
             
             //The spurNode ranges from the first node to the next to last node 
@@ -78,9 +79,9 @@ public class YEN {
 
         List<Route> routesYENOrder= routesOrderByCost(routesYEN, routing.getK());
         
-        // while(routesYEN.size() < this.K){
-        //     routesYEN.add(null);
-        // }
+        while(routesYEN.size() < ParametersSimulation.getKShortestRoutes()){
+            routesYEN.add(null);
+        }
         
         return routesYENOrder;
     }

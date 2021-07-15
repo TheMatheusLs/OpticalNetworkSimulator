@@ -1,5 +1,6 @@
 package src.Simulation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import src.Structure.Topology.Topology;
@@ -26,6 +27,8 @@ public class Simulation {
 
     CreateFolder folderToSave;
 
+    int[] seedsForLoad = new int[ParametersSimulation.getNumberOfSimulationsPerLoadNetwork()];
+
     public void initialize(CreateFolder folderToSave) throws Exception{
 
         //Adiciona o cabeçalho dos resultados
@@ -34,11 +37,39 @@ public class Simulation {
         this.folderToSave.writeInResults("networkLoad,meanPb,pbDesviation,pbErro,pbMargem,meanSimulationTime");
 
         this.topology = new Topology();
-
+        this.folderToSave.writeFile("Topology.txt", String.valueOf(this.topology));
+        
         this.routing = new Routing(this.topology);
+        this.folderToSave.writeFile("Routes.txt", String.valueOf(this.routing));
 
-        this.randomGeneration = new Random(42);
+        if (ParametersSimulation.getRandomGeneration().equals(ParametersSimulation.RandomGeneration.PseudoRandomGeneration)){
+            Random randomAux = new Random(ParametersSimulation.getMainSeed());
 
+            for (int nSim = 0; nSim < ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
+                seedsForLoad[nSim] = randomAux.nextInt(Integer.MAX_VALUE);
+            }
+        } else {
+            if (ParametersSimulation.getRandomGeneration().equals(ParametersSimulation.RandomGeneration.SameRequestForAllPoints)){
+
+                Random randomAux = new Random(ParametersSimulation.getMainSeed());
+    
+                int seedFix = randomAux.nextInt(Integer.MAX_VALUE);
+
+                for (int nSim = 0; nSim < ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
+                    seedsForLoad[nSim] = seedFix;
+                }
+            } else {
+                if (ParametersSimulation.getRandomGeneration().equals(ParametersSimulation.RandomGeneration.RandomGeneration)){
+                    Random randomAux = new Random();
+
+                    this.randomGeneration = new Random(randomAux.nextInt(Integer.MAX_VALUE));
+
+                    for (int nSim = 0; nSim < ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
+                        seedsForLoad[nSim] = randomAux.nextInt(Integer.MAX_VALUE);;
+                    }
+                }
+            }
+        }
     }
 
     public void simulateMultiLoad() throws Exception{
@@ -50,9 +81,24 @@ public class Simulation {
 
             System.out.println(String.format("Simulando carga de %f", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration())));
 
-            double[] results = this.simulateSingle((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()));
+            List<Double> PBLoad = new ArrayList<Double>();
+            List<Double> TimeLoad = new ArrayList<Double>();
 
-            this.folderToSave.writeInResults((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()) + "," + results[0] + "," + 0 + "," + 0 + "," + 0 + "," + results[1]);
+            for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
+                
+                int seedSimulation = seedsForLoad[nSim-1];
+
+                this.randomGeneration = new Random(seedSimulation);
+
+                System.out.println(String.format("Simulação nº: %d com seed = %d", nSim, seedSimulation));
+
+                double[] results = this.simulateSingle((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()));
+                PBLoad.add(results[0]);
+                TimeLoad.add(results[1]);
+            }
+
+
+            this.folderToSave.writeInResults((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()) + "," + Function.getMeanList(PBLoad) + "," + 0 + "," + 0 + "," + 0 + "," + Function.getMeanList(TimeLoad));
         }
     }
 
@@ -129,7 +175,7 @@ public class Simulation {
 					callRequest.setRoute(route);
 
 					// Incrementar os slots que estão sendo utilizados pelas rotas
-					//route.incrementSlotsOcupy(slots);
+					route.incrementSlotsOcupy(slots);
 
 					callRequest.allocate(route.getUpLink(), route.getDownLink(), topology.getListOfNodes());
 					listOfCalls.addCall(callRequest);

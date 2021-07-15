@@ -12,6 +12,18 @@ import src.Types.ModulationLevelType;
 
 public class Function {
 
+	public static double getMeanList(List<Double> list){
+
+		int numSize = list.size();
+		double acum = 0.0;
+
+		for (double value : list){
+			acum += value;
+		}
+
+		return acum / numSize;
+	}
+
 	public static int getNumberSlots(ModulationLevelType modulation, int bitRate) {
         int numSlots;
         double bandwidth = bandwidthQAM(modulation, bitRate * 1e9);

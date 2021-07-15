@@ -10,28 +10,11 @@ import src.Types.ModulationLevelType;
  * @version 0.0.1
  */
 public class ParametersSimulation{
-    // 1 NSFNet
-    // 2 YEN
-    // 2 FF
-    // 1 Hops
-    // 1 100-200-400
-    // 1 1
-    // 0 Disabled
-    // 2 EON
-    // 0 Routing-SA
-    // 0 GA Disabled
-    // 0 Disabled
-    // 0 Disabled
-    // 0 Disabled
-    // 0 Invalid
-    // 0 Invalid
-    // 0 Total number of call requests
-    // 0 Same request for all points
-
 
     final static double minLoadNetwork = 240;
     final static double maxLoadNetwork = 300;
     final static int numberOfPointsLoadNetwork = 6;
+    final static int numberOfSimulationsPerLoadNetwork = 10;
 
     final static int numberOfSlotsPerLink = 128;
     final static long maxNumberOfRequisitions = (long) 1e6;
@@ -41,10 +24,12 @@ public class ParametersSimulation{
     
     final static int numberOfPolarizations = 2;
     final static int guardBandSize = 0;
+
+    final static int mainSeed = 42;
     
-    final static TopologyType topologyType = TopologyType.NSFNet; //ok
-    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.YEN; //ok
-    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.FirstFit; //ok
+    final static TopologyType topologyType = TopologyType.NSFNet;
+    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.YEN;
+    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.FirstFit;
     final static LinkCostType linkCostType = LinkCostType.Hops;
     final static int[] trafficOption = new int[]{100, 200, 400};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
@@ -52,7 +37,7 @@ public class ParametersSimulation{
     final static RSAOrder RSAOrderType = RSAOrder.SA_Routing;
     final static GAOption GAOptionType = GAOption.GADisabled;
     final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
-    final static RandomGeneration randomGeneration = RandomGeneration.SameRequestForAllPoints;
+    final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
 
 	final static ModulationLevelType[] mudulationLevelType = {
@@ -69,8 +54,16 @@ public class ParametersSimulation{
         return maxLoadNetwork;
     }
 
+    public static int getMainSeed() {
+        return mainSeed;
+    }
+
     public static int getNumberOfPointSloadNetwork() {
         return numberOfPointsLoadNetwork;
+    }
+
+    public static int getNumberOfSimulationsPerLoadNetwork() {
+        return numberOfSimulationsPerLoadNetwork;
     }
 
     public static int getNumberOfSlotsPerLink() {
@@ -223,6 +216,7 @@ public class ParametersSimulation{
         txt += String.format("minLoadNetwork = %f\n", minLoadNetwork);
         txt += String.format("maxLoadNetwork = %f\n", maxLoadNetwork);
         txt += String.format("numberOfPointsLoadNetwork = %d\n", numberOfPointsLoadNetwork);
+        txt += String.format("numberOfSimulationsPerLoadNetwork = %d\n", numberOfSimulationsPerLoadNetwork);
 
         txt += String.format("numberOfSlotsPerLink = %d\n", numberOfSlotsPerLink);
 
@@ -234,6 +228,8 @@ public class ParametersSimulation{
         txt += String.format("numberOfPolarizations = %d\n", numberOfPolarizations);
         txt += String.format("guardBandSize = %d\n", guardBandSize);
         
+        txt += String.format("mainSeed = %d\n", mainSeed);
+
         txt += String.format("topologyType = %s\n", topologyType.name());
         txt += String.format("routingAlgorithmType = %s\n", routingAlgorithmType.name());
         txt += String.format("spectralAllocationAlgorithmType = %s\n", spectralAllocationAlgorithmType.name());

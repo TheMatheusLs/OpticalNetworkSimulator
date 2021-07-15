@@ -54,7 +54,7 @@ public class CallRequestList {
 			if(time<acumulatedTime){
 
 				// Diminuir os slots que estão sendo usados
-				//callRequest.getRoute().decreasesSlotsOcupy(callRequest.getFrequencySlots());
+				callRequest.getRoute().decreasesSlotsOcupy(callRequest.getFrequencySlots());
 
 				this.callReqList.get(x).desallocate();
 				this.callReqList.remove(x);

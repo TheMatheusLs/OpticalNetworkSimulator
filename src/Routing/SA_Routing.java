@@ -29,13 +29,17 @@ public class SA_Routing {
                 }
 
                 // Verifica se é possível alocar a requisição
-                List<Integer> slots = FirstFit.findFrequencySlots(ParametersSimulation.getNumberOfSlotsPerLink(), reqNumbOfSlots, route.getUpLink(), route.getDownLink());
-
-                if(!slots.isEmpty() && slots.size()==reqNumbOfSlots){
-                    if(slots.get(0) == firstIndexSlot){
-                        return route;
+                for (int indexSlot = firstIndexSlot; indexSlot < firstIndexSlot + reqNumbOfSlots; indexSlot++){
+                    if (indexSlot >= ParametersSimulation.getNumberOfSlotsPerLink()){
+                        continue LOOP_ROUTE;
+                    }
+                    
+                    if (route.getSlotValue(indexSlot) != 0){
+                        continue LOOP_ROUTE;
                     }
                 }
+
+                return route;
             }
             firstIndexSlot++;
         }

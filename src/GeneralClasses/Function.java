@@ -40,8 +40,11 @@ public class Function {
     }
 
 	public static double exponentialDistribution(double networkLoad, Random rand) {
-        return Math.log(1-rand.nextDouble())/(-networkLoad);
+        return - Math.log(1 - rand.nextDouble())  / networkLoad;
     }
+	// public static double exponentialDistribution(double networkLoad, Random rand) {
+    //     return Math.log(1-rand.nextDouble())  / (-networkLoad);
+    // }
 
     public static int uniformIntDistribution(int init, int ended, Random rand) {
         return init + rand.nextInt(ended);

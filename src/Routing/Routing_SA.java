@@ -37,6 +37,6 @@ public class Routing_SA {
             }
         }
 
-        return new Route();
+        return null;
     }
 }

@@ -287,9 +287,9 @@ public class CallRequest{
    	 * M�todo para sortear a taxa de transmiss�o.
    	 * @author Andr� 			
    	 */		
-	public void sortBitRate(){
+	public void sortBitRate(Random randomGeneration){
 		final int size = this.possibleBitRates.size();
-		final int number = (int) (Math.random()*size);
+		final int number = (int) (randomGeneration.nextDouble() * size);
         this.bitRate = this.possibleBitRates.get(number);
 	}
 	/**
@@ -319,8 +319,8 @@ public class CallRequest{
    	 */	
 	public void setTime(final double time, final double meanDurationRate, Random randomGeneration){
 		
-		this.decayTime = time + Function.exponentialDistribution(meanDurationRate, randomGeneration);
-		this.duration = this.decayTime-time;
+		this.duration = Function.exponentialDistribution(meanDurationRate, randomGeneration);;
+		this.decayTime = time + this.duration;
 	}		
 	/**
    	 * M�todo para configurar a requisi��o de chamada.

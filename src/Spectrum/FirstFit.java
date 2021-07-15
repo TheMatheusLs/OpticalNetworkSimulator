@@ -119,14 +119,18 @@ public class FirstFit{ // NOPMD by Andr� on 07/06/17 09:26
 						continue POINT; //Procura o pr�ximo slot dispon�vel na grade para come�ar o processo.
 					}				
 				}
-				
-				for(int f=0;f<uplink.size();f++){
-					final OpticalLink opticallinkUp = uplink.get(f);
-					final boolean availSlotIn = Function.avaliableSlotInOpticalLink(opticallinkUp, s+reqNumbOfSlots-1);
-					if(!availSlotIn){ //Analisa o nth slots.
-						availableLastSlot = false;
-						break;
-					}				
+
+				if(s+reqNumbOfSlots-1 < numberOfSlots){
+					for(int f=0;f<uplink.size();f++){
+						final OpticalLink opticallinkUp = uplink.get(f);
+						final boolean availSlotIn = Function.avaliableSlotInOpticalLink(opticallinkUp, s+reqNumbOfSlots-1);
+						if(!availSlotIn){ //Analisa o nth slots.
+							availableLastSlot = false;
+							break;
+						}				
+					}
+				}else{
+					availableLastSlot = false;
 				}
 				
 				if((s+reqNumbOfSlots)<numberOfSlots && availableLastSlot){					

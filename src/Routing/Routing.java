@@ -5,6 +5,7 @@ import java.util.List;
 
 import src.ParametersSimulation;
 import src.ParametersSimulation.RoutingAlgorithmType;
+import src.Structure.OpticalLink;
 import src.Structure.Topology.Topology;
 
 import src.Routing.Algorithm.Dijkstra;
@@ -42,8 +43,133 @@ public class Routing {
             }
         }
 
+        if (ParametersSimulation.getCallRequestType().equals(ParametersSimulation.CallRequestType.Bidirectional)){
+			this.generateConflictListBidirectional();
+		} else {
+			this.generateConflictList();
+		}
+
         System.out.println(this);
     }
+
+    public void generateConflictList(){
+        System.out.println("Criando a lista de rotas conflitantes");
+
+        for (List<Route> routesOD : this.allRoutes){
+            for (Route mainRoutes : routesOD){
+
+                if (mainRoutes == null){
+                    continue;
+                }
+
+                List<Route> conflictRoutes = new ArrayList<Route>();
+                int currentRouteID = mainRoutes.hashCode();
+
+                //Se pelo menos um link for compartilhado pelas rotas há um conflito
+                for (OpticalLink mainLink: mainRoutes.getUpLink()){
+                    //System.out.println("");
+
+                    // Percorre todas as Rotas
+                    for (List<Route> routesODAux : this.allRoutes){
+                        for (Route mainRoutesAux : routesODAux){
+                            if (mainRoutesAux == null){
+                                continue;
+                            }
+                            BREAK_LINK:for (OpticalLink link: mainRoutesAux.getUpLink()){
+                                if ((currentRouteID != mainRoutesAux.hashCode()) && (mainLink == link)){
+                                    conflictRoutes.add(mainRoutesAux);
+                                    break BREAK_LINK;
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+
+                mainRoutes.setConflitList(conflictRoutes);
+            }
+        }
+    }
+
+    public void generateConflictListBidirectional() throws Exception{
+        System.out.println("Criando a lista de rotas conflitantes. Bidirecional");
+
+        List<Route> allRoutesAux = new ArrayList<Route>();
+
+
+        for (List<Route> routesOD : this.allRoutes){
+            if ((routesOD != null) && (routesOD.size() > 0)){
+                for (Route mainRoutes : routesOD){
+                    allRoutesAux.add(mainRoutes);
+                }
+            }
+        }
+
+        // Percorre todas as Rotas
+        for (Route mainRoutes : allRoutesAux){
+
+            // Cria a estrutura para armazenar a lista de conflitos
+            List<Route> conflictRoutes = new ArrayList<Route>();
+
+            // Armazena o ID da rota principal
+            int currentRouteID = mainRoutes.hashCode();
+
+            List<OpticalLink> mainRoutesUplinks = mainRoutes.getUpLink();
+            List<OpticalLink> mainRoutesDownlinks = mainRoutes.getDownLink();
+
+            if (mainRoutesUplinks.size() != mainRoutesDownlinks.size()){
+                throw new Exception("Os tamanhos de Uplink e Downlink são diferentes");
+            }
+
+            // Procura por conflito dentro com os links presente no Uplink da rota principal
+            for (int mainl = 0; mainl < mainRoutesUplinks.size(); mainl++) {
+
+                OpticalLink mainRoutesUplink = mainRoutesUplinks.get(mainl);
+                OpticalLink mainRoutesDownlink = mainRoutesDownlinks.get(mainl);
+
+                // Percorre todas as Rotas
+                for (Route auxConflictRoutes : allRoutesAux){
+                
+                    List<OpticalLink> auxConflictRoutesUplinks = auxConflictRoutes.getUpLink();
+                    List<OpticalLink> auxConflictRoutesDownlinks = auxConflictRoutes.getDownLink();
+
+                    // Percorre os uplinks e downlinks da rota auxConflictRoutes
+                    BREAK:for (int auxl = 0; auxl < auxConflictRoutesUplinks.size(); auxl++){
+
+                        OpticalLink auxConflictRoutesUplink = auxConflictRoutesUplinks.get(auxl);
+                        OpticalLink auxConflictRoutesDownlink = auxConflictRoutesDownlinks.get(auxl);
+
+                        // Verifica se a rota auxiliar não é a rota principal.
+                        boolean isMainRoute = (currentRouteID == auxConflictRoutes.hashCode());
+
+                        // Verifica se o mainUp é diferente do auxUp
+                        boolean isMainUpAuxUp = (mainRoutesUplink == auxConflictRoutesUplink);
+                        // Verifica se o mainUp é diferente do auxDown
+                        boolean isMainUpAuxDown = (mainRoutesUplink == auxConflictRoutesDownlink);
+                        // Verifica se o mainDown é diferente do auxUp
+                        boolean isMainDownAuxUp = (mainRoutesDownlink == auxConflictRoutesUplink);
+                        // Verifica se o mainDown é diferente do auxDown
+                        boolean isMainDownAuxDown = (mainRoutesDownlink == auxConflictRoutesDownlink);
+
+                        boolean isAlreadyAdd = false;
+                        BREAK_ADD: for (Route RouteInConflict: conflictRoutes){
+                            if (RouteInConflict == auxConflictRoutes){
+                                isAlreadyAdd = true;
+                                break BREAK_ADD;
+                            }
+                        }
+
+                        if (!isMainRoute && (isMainUpAuxUp || isMainUpAuxDown || isMainDownAuxUp || isMainDownAuxDown) && !isAlreadyAdd){
+                            conflictRoutes.add(auxConflictRoutes);
+                            break BREAK;
+                        }
+                    }
+                } // end for auxConflictRoutes
+
+                mainRoutes.setConflitList(conflictRoutes);
+            } // end for mainRoutesUplink
+        }// end for mainRoutes
+    }// end function
 
     public int getK() {
         return K;

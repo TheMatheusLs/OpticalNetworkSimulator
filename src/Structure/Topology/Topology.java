@@ -89,6 +89,10 @@ public class Topology {
         }
     }
 
+    public List<OpticalSwitch> getListOfNodes() {
+        return listOfNodes;
+    }
+
     public void checkIfIsClean() throws Exception{
         for (int s = 0; s < networkLinks.length;s++){
 			for (int d = 0; d < networkLinks.length;d++){

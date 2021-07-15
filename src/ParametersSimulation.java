@@ -10,6 +10,24 @@ import src.Types.ModulationLevelType;
  * @version 0.0.1
  */
 public class ParametersSimulation{
+    // 1 NSFNet
+    // 2 YEN
+    // 2 FF
+    // 1 Hops
+    // 1 100-200-400
+    // 1 1
+    // 0 Disabled
+    // 2 EON
+    // 0 Routing-SA
+    // 0 GA Disabled
+    // 0 Disabled
+    // 0 Disabled
+    // 0 Disabled
+    // 0 Invalid
+    // 0 Invalid
+    // 0 Total number of call requests
+    // 0 Same request for all points
+
 
     final static double minLoadNetwork = 240;
     final static double maxLoadNetwork = 300;
@@ -21,21 +39,21 @@ public class ParametersSimulation{
 
     final static int kShortestRoutes = 3;
     
-    final static int numberOfPolarizations = 1;
+    final static int numberOfPolarizations = 2;
     final static int guardBandSize = 0;
     
-    final static TopologyType topologyType = TopologyType.NSFNet;
-    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.YEN;
-    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.FirstFit;
+    final static TopologyType topologyType = TopologyType.NSFNet; //ok
+    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.YEN; //ok
+    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.FirstFit; //ok
     final static LinkCostType linkCostType = LinkCostType.Hops;
     final static int[] trafficOption = new int[]{100, 200, 400};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
-    final static RSAOrder RSAOrderType = RSAOrder.Routing_SA;
+    final static RSAOrder RSAOrderType = RSAOrder.SA_Routing;
     final static GAOption GAOptionType = GAOption.GADisabled;
-    final static StopCriteria stopCriteria = StopCriteria.BlockedCallRequest;
+    final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.SameRequestForAllPoints;
-    final static CallRequestType callRequestType = CallRequestType.Bidirectional;
+    final static CallRequestType callRequestType = CallRequestType.Unidirectional;
 
 	final static ModulationLevelType[] mudulationLevelType = {
 		ModulationLevelType.EIGHT_QAM,
@@ -194,6 +212,7 @@ public class ParametersSimulation{
     }
 
     public enum CallRequestType{
+        Unidirectional,
         Bidirectional;
     }
 

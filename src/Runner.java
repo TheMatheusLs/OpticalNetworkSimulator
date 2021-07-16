@@ -8,7 +8,7 @@ public class Runner {
 
         final long geralInitTime = System.currentTimeMillis();
 
-        CreateFolder folderToSave = new CreateFolder("Teste");
+        CreateFolder folderToSave = new CreateFolder("MultiLoad");
         folderToSave.writeParameters();
 
         Simulation simulation = new Simulation();

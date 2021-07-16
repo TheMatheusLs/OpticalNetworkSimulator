@@ -14,7 +14,7 @@ public class ParametersSimulation{
     final static double minLoadNetwork = 240;
     final static double maxLoadNetwork = 300;
     final static int numberOfPointsLoadNetwork = 6;
-    final static int numberOfSimulationsPerLoadNetwork = 1;
+    final static int numberOfSimulationsPerLoadNetwork = 10;
 
     final static int numberOfSlotsPerLink = 128;
     final static long maxNumberOfRequisitions = (long) 1e6;

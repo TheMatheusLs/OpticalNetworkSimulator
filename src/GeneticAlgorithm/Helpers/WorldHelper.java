@@ -320,7 +320,7 @@ public class WorldHelper {
 
         Scanner histReqs = null;
 
-		String filenameComplete = String.format("D:\\ProgrammingFiles\\ReportsSIMTON\\%s\\%s", folder, filename);
+		String filenameComplete = String.format("%s\\%s\\%s", ParametersSimulation.getPathToSaveResults(), folder, filename);
             
 		histReqs = new Scanner(new FileReader(filenameComplete));
 

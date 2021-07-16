@@ -11,7 +11,7 @@ public class Config {
     public static final int numberOfCompetitors = 3;
     public static final int maxGenerations = 300;
     public static final int maxNoImprovementCount = 150;
-    public final static double networkLoadGATraining = 270;
+    public final static double networkLoadGATraining = 260;
 
     public static String printParameters() {
 

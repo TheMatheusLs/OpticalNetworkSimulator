@@ -61,7 +61,7 @@ public class World{
     private void runPopulationFitness(List<Individual> population) throws Exception {
         for (Individual individual : population){
 
-            double[] result = this.simulation.doSimulateGA(individual);
+            double[] result = this.simulation.doSimulateGA(individual, Config.networkLoadGATraining);
 
             individual.numberOfSimulations++;
 

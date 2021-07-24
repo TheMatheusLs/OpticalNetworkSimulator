@@ -179,7 +179,10 @@ public class MSCL {
                 // Calcula a perda de capacidade na rota principal
                 lostCapacityTotal += capacityBeforeRoute - capacityAfterRoute;
 
-                for (Route iRoute: route.getConflictRoute()){
+                List<Route> iRoutesOrder = iRoutesOrderBy(route.getConflictRoutesNonDominants(), 12 * route.getNumHops());
+
+                //for (Route iRoute: route.getConflictRoute()){
+                for (Route iRoute: iRoutesOrder){
 
                     // Busca o mínimo a esquerda
                     int minSlot = findSlotLeft(iRoute, startSlot);
@@ -255,6 +258,48 @@ public class MSCL {
         this.slotsMSCL.add(slotsReq);
 
         return bestLostCapacity;
+    }
+
+    private List<Route> iRoutesOrderBy(List<Route> conflictRoute, int numberOfRoutes) {
+        List<Route> conflictRouteAux = new ArrayList<Route>();
+        List<Route> newIRoutesList = new ArrayList<Route>();
+
+        double maxCost = Double.MAX_VALUE;
+
+        // Encontra o maior custo
+        for (Route iRoute : conflictRoute){
+            conflictRouteAux.add(iRoute);
+
+            if (maxCost > iRoute.getCost()){
+                maxCost = iRoute.getCost();
+            }
+        }
+
+        LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < numberOfRoutes)){
+            for (Route iRoute : conflictRouteAux){
+                if (maxCost == iRoute.getCost()){
+                    newIRoutesList.add(iRoute);
+                }
+
+                if (newIRoutesList.size() == numberOfRoutes){
+                    break LOOP;
+                }
+            }
+
+            for (Route route : newIRoutesList){
+                conflictRouteAux.remove(route);
+            }
+
+            maxCost = Double.MAX_VALUE;
+            for (Route iRoute : conflictRouteAux){
+                if (maxCost > iRoute.getCost()){
+                    maxCost = iRoute.getCost();
+                }
+            }
+        }
+
+
+        return newIRoutesList;
     }
 
     private List<Integer> getSizeSlotByBitrate() {

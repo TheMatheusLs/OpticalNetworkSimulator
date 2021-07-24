@@ -12,6 +12,27 @@ import src.Types.ModulationLevelType;
 
 public class Function {
 
+	/**
+	 * @param sequence_A
+	 * @param sequence_B
+	 * @return Verdadeiro caso a sequencia A esteja contida na sequência B; 
+	 */
+	public static boolean isSequenceADomainsB(List<Integer> sequence_A, List<Integer> sequence_B){
+		
+		String sequence_A_s = "";
+		for (int value : sequence_A){
+			sequence_A_s += String.format("|%d|", value);
+		}
+
+		String sequence_B_s = "";
+		for (int value : sequence_B){
+			sequence_B_s += String.format("|%d|", value);
+		}
+
+		return sequence_A_s.contains(sequence_B_s);
+	}
+
+
 	public static double getMeanList(List<Double> list){
 
 		int numSize = list.size();

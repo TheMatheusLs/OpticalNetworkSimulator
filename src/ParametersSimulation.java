@@ -18,7 +18,7 @@ public class ParametersSimulation{
 
     final static int numberOfSlotsPerLink = 128;
     final static long maxNumberOfRequisitions = (long) 1e6;
-    final static int maxNumberOfBlockedRequests = 1000;
+    final static int maxNumberOfBlockedRequests = 500;
 
     final static int kShortestRoutes = 3;
     

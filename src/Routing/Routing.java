@@ -49,7 +49,104 @@ public class Routing {
 			this.generateConflictList();
 		}
 
+        this.generateDominantConflictRoutes();
+        this.generateNonDominantConflictRoutes();
+
         System.out.println(this);
+    }
+
+    /**
+     * Gera uma lista de rotas interferentes que são dominantes.
+     */
+    private void generateDominantConflictRoutes() {
+
+        System.out.println("Criando a lista de rotas interferentes dominantes...");
+
+        // Percorre todas as rotas encontradas
+        for (List<Route> routesOD : this.allRoutes){
+            LOOP_MAIN : for (Route mainRoute : routesOD){
+                
+                List<Route> dominatsRoutes = new ArrayList<Route>();
+
+                // Verifica se a rota existe
+                if (mainRoute == null){
+                    continue;
+                }
+
+                LOOP_CURRENT : for (Route currentRoute : mainRoute.getConflictRoute()){
+                    for (Route routeAux : mainRoute.getConflictRoute()){
+                        if (currentRoute.hashCode() == routeAux.hashCode()){
+                            continue;
+                        }
+                        
+                        // Essa rota está sendo dominada
+                        if (currentRoute.thisRouteIsDominateBy(routeAux)){
+                            continue LOOP_CURRENT;
+                        }
+                    }
+
+                    dominatsRoutes.add(currentRoute);
+                }
+
+                // System.out.println("Conflitantes");
+                // for (Route domR : mainRoute.getConflictRoute()){
+                //     System.out.print(domR);
+                // }
+
+                // System.out.println("Não dominadas");
+                // for (Route domR : dominatsRoutes){
+                //     System.out.print(domR);
+                // }
+
+                mainRoute.setConflitListDominants(dominatsRoutes);
+            }
+        }
+    }
+
+    /**
+     * Gera uma lista de rotas interferentes que são dominantes.
+     */
+    private void generateNonDominantConflictRoutes() {
+
+        System.out.println("Criando o complemento das rotas interferentes dominantes...");
+
+        // Percorre todas as rotas encontradas
+        for (List<Route> routesOD : this.allRoutes){
+            LOOP_MAIN : for (Route mainRoute : routesOD){
+                
+                List<Route> nonDominatsRoutes = new ArrayList<Route>();
+
+                // Verifica se a rota existe
+                if (mainRoute == null){
+                    continue;
+                }
+
+                // Percorre toda a lista de rotas interferentes
+                LOOP_CURRENT : for (Route currentRoute : mainRoute.getConflictRoute()){
+                    // Percorre toda a lista de rotas dominantes
+                    for (Route dominantRoute : mainRoute.getConflictRoutesDominants()){
+
+                        if (currentRoute.hashCode() == dominantRoute.hashCode()){
+                            continue LOOP_CURRENT; 
+                        }
+                    }
+
+                    nonDominatsRoutes.add(currentRoute);
+                }
+
+                // System.out.println("Conflitantes");
+                // for (Route domR : mainRoute.getConflictRoute()){
+                //     System.out.print(domR);
+                // }
+
+                // System.out.println("Não dominadas");
+                // for (Route domR : nonDominatsRoutes){
+                //     System.out.print(domR);
+                // }
+
+                mainRoute.setConflictRoutesNonDominants(nonDominatsRoutes);
+            }
+        }
     }
 
     public void generateConflictList(){
@@ -178,7 +275,7 @@ public class Routing {
     @Override
     public String toString() {
 
-        String txt = "\t*** Routing ***\n";
+        String txt = ""; //"\t*** Routing ***\n";
 
         for (List<Route> routes : allRoutes){
             for (Route route : routes){

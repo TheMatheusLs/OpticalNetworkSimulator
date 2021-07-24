@@ -188,132 +188,42 @@ public class WorldHelper {
         
     }
 
-    public static Individual DoCrossover(Individual individualA, Individual individualB){
-        return DoCrossover(individualA, individualB, -1, -1);
-    }
-
-    public static Individual DoCrossover(Individual individualA, Individual individualB, int crossoverPosition_A, int crossoverPosition_B)
-    {
-        crossoverPosition_A = crossoverPosition_A == -1 
-            ? 1 + random.nextInt(individualA.chromosome.size() - 2)
-            : crossoverPosition_A;
-
-        crossoverPosition_B = crossoverPosition_B == -1 
-            ? 1 + random.nextInt(individualA.chromosome.size() - 2)
-            : crossoverPosition_B;
-
-        int firstIndex = crossoverPosition_A < crossoverPosition_B ?  crossoverPosition_A : crossoverPosition_B;
-        int secondIndex = crossoverPosition_A < crossoverPosition_B ?  crossoverPosition_B : crossoverPosition_A;
-
-
-        List<Gene> offspringGenes = new ArrayList<Gene>();
-        for (int i = 0; i < firstIndex; i++){
-            offspringGenes.add(individualA.chromosome.get(i));
-        }
-
-        for (int i = firstIndex; i < secondIndex; i++){
-            offspringGenes.add(individualB.chromosome.get(i));
-        }
-
-        for (int i = secondIndex; i < individualA.chromosome.size(); i++){
-            offspringGenes.add(individualA.chromosome.get(i));
-        }
-
-        return new Individual(offspringGenes);
-    }
-
-    public static int[] GetUniqueTowns(List<Integer> sequence){
-        // Randomly select two towns
-        int townA = random.nextInt(sequence.size());
-        int townB = random.nextInt(sequence.size());
-
-        // Ensure that the two towns are not the same
-        while (townB == townA)
-        {
-            townB = random.nextInt(sequence.size());
-        }
-
-        return new int[]{townA, townB};
-    }
-
     public static Individual[] Mutate(Individual individualA, Individual individualB)
     {
-        boolean individualAMutate = false;
-        boolean individualBMutate = false;
-
         Individual newIndividualA = new Individual(individualA.chromosome);
         Individual newIndividualB = new Individual(individualB.chromosome);
 
-        if (random.nextDouble() < Config.mutationChance){
-            newIndividualA = doMutate(individualA);
-            individualAMutate = true;
-        }
+        newIndividualA = doMutate(individualA);
 
-        if (random.nextDouble() < Config.mutationChance){
-            newIndividualB = doMutate(individualB);
-            individualBMutate = true;
-        }
-
-        if (!individualAMutate && !individualBMutate){
-            return new Individual[]{individualA, individualB};
-        } else {
-            if (individualAMutate && !individualBMutate){
-                return new Individual[]{newIndividualA, individualB};
-            } else {
-                if (!individualAMutate && individualBMutate){
-                    return new Individual[]{individualA, newIndividualB};
-                } else {
-                    return new Individual[]{newIndividualA, newIndividualB};
-                }
-            }
-        }
+        newIndividualB = doMutate(individualB);
+        
+        return new Individual[]{newIndividualA, newIndividualB};  
     }
 
     private static Individual doMutate(Individual individual){
-        return doMutateGenes(individual);
-    }
 
-    private static Individual doMutateGenes(Individual individual) {
+        // Para cada gene
+        for (int geneIndex = 0; geneIndex < individual.chromosome.size(); geneIndex++){
 
-        List<Integer> selectGenes = new ArrayList<Integer>();
+            if (random.nextDouble() < Config.mutationChance){
 
-        List<Gene> chromosome = new ArrayList<Gene>();
-            for (Gene gene : individual.chromosome){
-                chromosome.add(gene);
-            }
+                Gene currentGene = individual.chromosome.get(geneIndex);
+                int geneCurrentValue = currentGene.integerGene;
 
-        for (int m = 0; m < (individual.chromosome.size() * Config.geneMutationPercent); m++){
-            
-            int randomGeneIndex;
-
-            LOOP: while (true){
-                randomGeneIndex = random.nextInt(individual.chromosome.size());
-
-                for (int i = 0; i < selectGenes.size(); i++){
-                    if (randomGeneIndex == selectGenes.get(i)){
-                        continue LOOP;
+                List<Integer> possiblesValuesForGene = new ArrayList<Integer>();
+                for (int geneSolution = 0; geneSolution < WorldHelper.geneMapping.size(); geneSolution++){
+                    if (geneCurrentValue != geneSolution){
+                        possiblesValuesForGene.add(geneSolution);
                     }
                 }
 
-                break LOOP;
+                currentGene.integerGene = possiblesValuesForGene.get(random.nextInt(possiblesValuesForGene.size()));
+
+                individual.chromosome.set(geneIndex, currentGene);
             }
-
-            Gene gene = chromosome.get(randomGeneIndex);
-            
-            int integerGene = gene.integerGene;
-
-            int newIntegerGene = random.nextInt(WorldHelper.geneMapping.size());
-
-            while (integerGene == newIntegerGene){
-                newIntegerGene = random.nextInt(WorldHelper.geneMapping.size());
-            }
-
-            Gene mutateGene = new Gene(newIntegerGene, gene.source, gene.destination);
-
-            chromosome.set(randomGeneIndex, mutateGene);
         }
 
-        return new Individual(chromosome);
+        return individual;
     }
 
     public static Individual ReadIndividualFromFile(String folder, String filename) throws FileNotFoundException {
@@ -408,5 +318,25 @@ public class WorldHelper {
         }
 
         throw new Exception("O que aconteceu aqui?");
+    }
+
+    public static Individual[] DoCrossoverUniforme(Individual individualA, Individual individualB){
+
+        // Cria inidivíduos temporários
+        Individual offSpringA = GenerateIndividualInteger( Config.numberOfNodes);
+        Individual offSpringB = GenerateIndividualInteger( Config.numberOfNodes);
+
+        //Para cada gene
+        for (int geneIndex = 0; geneIndex < individualA.chromosome.size(); geneIndex++){
+            if (random.nextDouble() > Config.crossoverChance){
+                offSpringA.chromosome.set(geneIndex, individualA.chromosome.get(geneIndex));
+                offSpringB.chromosome.set(geneIndex, individualB.chromosome.get(geneIndex));
+            } else {
+                offSpringA.chromosome.set(geneIndex, individualB.chromosome.get(geneIndex));
+                offSpringB.chromosome.set(geneIndex, individualA.chromosome.get(geneIndex));
+            }
+        }
+
+        return new Individual[]{offSpringA, offSpringB};
     }
 }   

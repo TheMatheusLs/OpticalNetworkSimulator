@@ -105,6 +105,7 @@ public class Simulation {
                 System.out.println(String.format("Simulação nº: %d com seed = %d", nSim, seedSimulation));
 
                 double[] results = this.simulateSingle((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()));
+
                 PBLoad.add(results[0]);
                 TimeLoad.add(results[1]);
             }
@@ -164,6 +165,12 @@ public class Simulation {
         final double meanRateCallDur = SimulationParameters.getMeanRateOfCallsDuration();
 
         LOOP_REQ : for(int i = 1; i <= ParametersSimulation.getMaxNumberOfRequisitions(); i++){
+
+            if (ParametersSimulation.getRoutingAlgorithmType().equals(ParametersSimulation.RoutingAlgorithmType.MSCLCombinado)){
+                if ((i % 1000) == 0){
+                    System.out.println(String.format("I = %d, Block = %d", i, (numBlockBySlots + numBlockByQoT)));
+                }
+            }
 
 			boolean hasSlots = false; 
             boolean hasQoT = false;
@@ -266,7 +273,7 @@ public class Simulation {
             limitCallRequest = i;
 
             if (ParametersSimulation.getStopCriteria().equals(ParametersSimulation.StopCriteria.BlockedCallRequest)){
-                if ((numBlockBySlots + numBlockByQoT) >= 1000){
+                if ((numBlockBySlots + numBlockByQoT) >= ParametersSimulation.getMaxNumberOfBlockedRequests()){
                     break LOOP_REQ;
                 }
             }

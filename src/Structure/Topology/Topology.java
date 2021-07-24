@@ -174,7 +174,11 @@ public class Topology {
         if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.NSFNet)){
             return NsfnetDimention.getLength();
         } else {
-            throw new Exception("Topologia inválida!");
+            if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.Finland)){
+                return FinlandDimention.getLength();
+            } else {
+                throw new Exception("Topologia inválida!");
+            }
         }
     }
 

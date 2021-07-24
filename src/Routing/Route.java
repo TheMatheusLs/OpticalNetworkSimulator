@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import src.ParametersSimulation;
+import src.GeneralClasses.Function;
 import src.Structure.OpticalLink;
 import src.Structure.OpticalSwitch;
 import src.Structure.Topology.Topology;
@@ -37,6 +38,9 @@ public class Route {
 	private List<OpticalLink> downLink;
 
 	private List<Route> conflictRoutes;
+    private List<Route> conflictRoutesDominants;
+    private List<Route> conflictRoutesNonDominants;
+
 
 	private short[] slotOcupation;
 
@@ -51,6 +55,10 @@ public class Route {
         this.pathNodes = new ArrayList<OpticalSwitch>();
         this.pathLinks = new ArrayList<OpticalLink>();
         this.cost = 0.0;
+
+        this.conflictRoutes = new ArrayList<Route>();
+        this.conflictRoutesDominants = new ArrayList<Route>();
+        this.conflictRoutesNonDominants = new ArrayList<Route>();
 
         this.K = 1;
 
@@ -98,13 +106,25 @@ public class Route {
 		return this.downLink;
 	}
 
+    public boolean thisRouteIsDominateBy(Route route){
+        return Function.isSequenceADomainsB(route.path, this.path);
+    }
+
     @Override
     public String toString() {
 
-        String txt = String.format("Rota: Origem = %d, Destino = %d, Custo = %f, K = %d, Caminho = ", this.origin, this.destination, this.cost, this.K);
+        // String txt = String.format("Rota: Origem = %d, Destino = %d, Custo = %f, K = %d, iR = %d, diR = %d, ndiR = %d, Caminho = ", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size());
+        
+        // for (int p = 0; p < this.path.size() - 1; p++){
+        //     txt += String.format("%d, ", this.path.get(p));
+        // }
+        // txt += String.format("%d\n", this.path.get(this.path.size() - 1));
+
+        // return txt;
+        String txt = String.format("%d,%d,%f,%d,%d,%d,%d,", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size());
         
         for (int p = 0; p < this.path.size() - 1; p++){
-            txt += String.format("%d, ", this.path.get(p));
+            txt += String.format("%d-", this.path.get(p));
         }
         txt += String.format("%d\n", this.path.get(this.path.size() - 1));
 
@@ -271,6 +291,22 @@ public class Route {
 
 	public List<Route> getConflictRoute(){
 		return this.conflictRoutes;
+	}
+
+    public void setConflitListDominants(List<Route> conflictRoutesDominants){
+		this.conflictRoutesDominants = conflictRoutesDominants;
+	}
+
+	public List<Route> getConflictRoutesDominants(){
+		return this.conflictRoutesDominants;
+	}
+
+    public void setConflictRoutesNonDominants(List<Route> conflictRoutesNonDominants){
+		this.conflictRoutesNonDominants = conflictRoutesNonDominants;
+	}
+
+	public List<Route> getConflictRoutesNonDominants(){
+		return this.conflictRoutesNonDominants;
 	}
 
 	public void resetSlotValue(){

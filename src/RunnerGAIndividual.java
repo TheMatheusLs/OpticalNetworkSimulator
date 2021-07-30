@@ -20,12 +20,12 @@ public class RunnerGAIndividual {
         Simulation simulation = new Simulation();
         simulation.initialize(folderToSave);
 
-        //Individual individual = WorldHelper.GenerateIndividualInteger(Config.numberOfNodes, 0);
+        Individual individual = WorldHelper.GenerateIndividualInteger(Config.numberOfNodes, 7);
 
-        String folder = "24-07-21_15-36-22_NSFNet_YEN_RunnerGATraining_Good";
-		String filename = "Solution_75_1.csv";
+        // String folder = "27-07-21_09-00-54_NSFNet_YEN_RunnerGATraining_OK_H-H-RSA_260E";
+		// String filename = "Solution_270_1.csv";
 
-		Individual individual = WorldHelper.ReadIndividualFromFile(folder, filename);
+		// Individual individual = WorldHelper.ReadIndividualFromFile(folder, filename);
 
         simulation.simulateMultiLoadGA(individual);
 

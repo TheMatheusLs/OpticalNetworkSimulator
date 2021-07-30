@@ -5,6 +5,7 @@ import java.util.List;
 
 import src.ParametersSimulation;
 import src.GeneralClasses.Function;
+import src.ParametersSimulation.PhysicalLayerOption;
 
 class Apeture {
     private int initPosition;
@@ -89,7 +90,15 @@ public class MSCL {
 
     public double getRouteMSCLCost(Route route, int bitRate) throws Exception{
 
-        int sizeSlotReq = Function.getNumberSlots(ParametersSimulation.getMudulationLevelType()[0], bitRate);
+        int sizeSlotReq = -1;
+
+        if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+            int bitRateIndex = Function.getBitRateIndex(bitRate);
+
+            sizeSlotReq = route.getNumberOfSlotsByBitRate(bitRateIndex);
+        } else {
+            sizeSlotReq = Function.getNumberSlots(ParametersSimulation.getMudulationLevelType()[0], bitRate);
+        }
 
         // Encontrar todos os buracos para a rota principal.
         List<Apeture> allApertures = getApetures(route, 0, ParametersSimulation.getNumberOfSlotsPerLink() - 1);
@@ -148,7 +157,12 @@ public class MSCL {
                 // Cálculo da capacidade antes da alocação na rota principal
                 double capacityBeforeRoute = 0.0;
 
-                List<Integer> possibleSlotsByRoute = this.getSizeSlotByBitrate();
+                List<Integer> possibleSlotsByRoute = null;
+                if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+                    possibleSlotsByRoute = route.getSizeSlotTypeByBitrate();
+                } else {
+                    possibleSlotsByRoute = this.getSizeSlotByBitrate();
+                }
 
                 for (int possibleReqSize: possibleSlotsByRoute){
                     if (possibleReqSize > aperture.getSize()){
@@ -196,8 +210,11 @@ public class MSCL {
 
                     List<Apeture> apetureAfectInIRoute = getApetures(iRoute, minSlot, maxSlot);
 
-                    //possibleSlotsByRoute = iRoute.getSizeSlotTypeByBitrate();
-                    possibleSlotsByRoute = this.getSizeSlotByBitrate();
+                    if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+                        possibleSlotsByRoute = iRoute.getSizeSlotTypeByBitrate();
+                    } else {
+                        possibleSlotsByRoute = this.getSizeSlotByBitrate();
+                    }
                     
                     capacityBeforeRoute = 0.0;
                     

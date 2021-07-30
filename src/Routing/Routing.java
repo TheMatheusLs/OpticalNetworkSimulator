@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import src.ParametersSimulation;
+import src.GeneralClasses.Function;
+import src.Parameters.SimulationParameters;
+import src.ParametersSimulation.PhysicalLayerOption;
 import src.ParametersSimulation.RoutingAlgorithmType;
 import src.Structure.OpticalLink;
 import src.Structure.Topology.Topology;
-
+import src.Types.ModulationLevelType;
 import src.Routing.Algorithm.Dijkstra;
 import src.Routing.Algorithm.YEN;
 
@@ -52,7 +55,58 @@ public class Routing {
         this.generateDominantConflictRoutes();
         this.generateNonDominantConflictRoutes();
 
+        if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+            this.findAllSizeSlotsAndModulationByRoute();
+        }
         System.out.println(this);
+    }
+    /**
+     * Calcula qual a modulação e slots será usada para cada tipo de bitRate
+     * @throws Exception
+     */
+    private void findAllSizeSlotsAndModulationByRoute() throws Exception {
+        System.out.println("Encontrando as modulações para as rotas");
+
+        for (List<Route> routesOD : this.allRoutes){
+            for (Route mainRoute : routesOD){
+
+                // Verifica se a rota existe
+                if (mainRoute == null){
+                    continue;
+                }
+                List<ModulationLevelType> modulationLevelByBitrate = new ArrayList<ModulationLevelType>();
+                List<Integer> sizeSlotsByBitrate = new ArrayList<Integer>();
+
+                POINT_BITRATE:for (int bitRate: ParametersSimulation.getTrafficOption()){
+
+                    for (ModulationLevelType modLevel: ParametersSimulation.getMudulationLevelType()){
+
+                        final double snrLinear = Math.pow(10, modLevel.getSNRIndB() / 10);
+                        final double osnrLinear = (((double) bitRate * 1e9) / (2 * SimulationParameters.getSpacing())) * snrLinear;
+
+                        final double inBoundQot = Function.evaluateOSNR(mainRoute);
+
+                        if(inBoundQot >= osnrLinear){
+                            modulationLevelByBitrate.add(modLevel);
+
+                            // Encontra o tamanho do slot
+                            final int reqNumbOfSlots = Function.getNumberSlots(modLevel, bitRate);
+
+                            sizeSlotsByBitrate.add(reqNumbOfSlots);
+
+                            continue POINT_BITRATE;
+                        }
+                    }
+                }
+
+                if (ParametersSimulation.getTrafficOption().length == modulationLevelByBitrate.size()){
+                    mainRoute.setModulationsTypeByBitrate(modulationLevelByBitrate);
+                    mainRoute.setSizeSlotTypeByBitrate(sizeSlotsByBitrate);
+                } else {
+                    throw new Exception("Erro ao alocar as modulações e slots da camada física!");
+                }
+            }
+        }
     }
 
     /**
@@ -351,7 +405,7 @@ public class Routing {
         }
     }
 
-    public void YEN() {
+    public void YEN() throws Exception {
         List<Route> routes;
         int numNodes = this.topology.getNumNodes();
         

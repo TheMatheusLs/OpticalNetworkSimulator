@@ -8,6 +8,7 @@ import src.GeneralClasses.Function;
 import src.Structure.OpticalLink;
 import src.Structure.OpticalSwitch;
 import src.Structure.Topology.Topology;
+import src.Types.ModulationLevelType;
 
 public class Route {
     /**
@@ -22,27 +23,50 @@ public class Route {
      * @brief Container of the nodes pointers of this path.
      */
     List<OpticalSwitch> pathNodes;
-    
+    /**
+     * Lista contendo o Links que compõe a rota
+     */
     List<OpticalLink> pathLinks;
     /**
      * @brief Cost of the route.
      */
     double cost;
-
+    /**
+     * Nó de origem;
+     */
     int origin;
+    /**
+     * Nó de destino;
+     */
     int destination;
-
+    /**
+     * Ordem que a rota foi encontrada pelo algoritmo de busca. A primeira inicia em 1;
+     */
     int K;
-
+    /**
+     * Conjuntos de Links que ligam a origem ao destino;
+     */
     private List<OpticalLink> upLink;
+    /**
+     * Conjuntos de Links que ligam o destino a origem;
+     */
 	private List<OpticalLink> downLink;
 
 	private List<Route> conflictRoutes;
     private List<Route> conflictRoutesDominants;
     private List<Route> conflictRoutesNonDominants;
-
-
+    /**
+     * Lista que armazena a ocupação dos slots em todos os links da rota.
+     */
 	private short[] slotOcupation;
+    /**
+     * Lista com as modulações que a rota aceita para um determinado bitRate. (Somente usado na camada física)
+     */
+	private List<ModulationLevelType> modulationsTypeByBitrate;
+    /**
+     * Lista com os respectivos tamanhos dos slots necessários para atender ao bitRate (Somente usado na camada física);
+     */
+	private List<Integer> slotsByBitrate;
 
     public Route() {		
 		this.upLink = new ArrayList<OpticalLink>();
@@ -113,22 +137,22 @@ public class Route {
     @Override
     public String toString() {
 
-        // String txt = String.format("Rota: Origem = %d, Destino = %d, Custo = %f, K = %d, iR = %d, diR = %d, ndiR = %d, Caminho = ", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size());
-        
-        // for (int p = 0; p < this.path.size() - 1; p++){
-        //     txt += String.format("%d, ", this.path.get(p));
-        // }
-        // txt += String.format("%d\n", this.path.get(this.path.size() - 1));
-
-        // return txt;
-        String txt = String.format("%d,%d,%f,%d,%d,%d,%d,", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size());
+        String txt = String.format("Rota: Origem = %d, Destino = %d, Custo = %f, K = %d, iR = %d, diR = %d, ndiR = %d, Caminho = ", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size());
         
         for (int p = 0; p < this.path.size() - 1; p++){
-            txt += String.format("%d-", this.path.get(p));
+            txt += String.format("%d, ", this.path.get(p));
         }
         txt += String.format("%d\n", this.path.get(this.path.size() - 1));
 
         return txt;
+        // String txt = String.format("%d,%d,%f,%d,%d,%d,%d,", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size());
+        
+        // for (int p = 0; p < this.path.size() - 1; p++){
+        //     txt += String.format("%d-", this.path.get(p));
+        // }
+        // txt += String.format("%d\n", this.path.get(this.path.size() - 1));
+
+        // return txt;
     }
 
     boolean isEquals(Route right) {
@@ -353,4 +377,20 @@ public class Route {
 	void decreasesSlots(int slot){
 		this.slotOcupation[slot]--;
 	}
+
+    public void setModulationsTypeByBitrate(List<ModulationLevelType> modulationsTypeByBitrate){
+		this.modulationsTypeByBitrate = modulationsTypeByBitrate;
+	}
+
+    public void setSizeSlotTypeByBitrate(List<Integer> slotsByBitrate){
+		this.slotsByBitrate = slotsByBitrate;
+	}
+
+    public List<Integer> getSizeSlotTypeByBitrate(){
+		return this.slotsByBitrate;
+	}
+
+    public int getNumberOfSlotsByBitRate(int index){
+        return this.slotsByBitrate.get(index);
+    }
 }

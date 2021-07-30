@@ -13,14 +13,14 @@ public class ParametersSimulation{
 
     final static double minLoadNetwork = 240;
     final static double maxLoadNetwork = 300;
-    final static int numberOfPointsLoadNetwork = 6;
-    final static int numberOfSimulationsPerLoadNetwork = 10;
+    final static int numberOfPointsLoadNetwork = 1;
+    final static int numberOfSimulationsPerLoadNetwork = 1;
 
     final static int numberOfSlotsPerLink = 128;
     final static long maxNumberOfRequisitions = (long) 1e6;
     final static int maxNumberOfBlockedRequests = 500;
 
-    final static int kShortestRoutes = 3;
+    final static int kShortestRoutes = 4;
     
     final static int numberOfPolarizations = 2;
     final static int guardBandSize = 0;
@@ -35,7 +35,7 @@ public class ParametersSimulation{
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
-    final static GAOption GAOptionType = GAOption.GAHRSAEnable;
+    final static GAOption GAOptionType = GAOption.GAHHRSAEnable;
     final static StopCriteria stopCriteria = StopCriteria.BlockedCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;

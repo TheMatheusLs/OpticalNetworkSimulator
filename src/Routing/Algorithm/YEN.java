@@ -7,11 +7,15 @@ import src.Routing.Route;
 import src.Routing.Routing;
 import src.Structure.OpticalSwitch;
 import src.Structure.Topology.Topology;
+import src.Types.ModulationLevelType;
 import src.ParametersSimulation;
+import src.GeneralClasses.Function;
+import src.Parameters.SimulationParameters;
+import src.ParametersSimulation.PhysicalLayerOption;
 
 public class YEN {
 
-    public static List<Route> findRoute(int orNode, int deNode, Topology topology, Routing routing) {
+    public static List<Route> findRoute(int orNode, int deNode, Topology topology, Routing routing) throws Exception{
         assert(orNode != deNode);
 
         List<Route> routesYEN = new ArrayList<Route>();
@@ -77,20 +81,21 @@ public class YEN {
             candidateRoutes.remove(0);
         }
 
-        List<Route> routesYENOrder= routesOrderByCost(routesYEN, routing.getK());
+        List<Route> routesYENOrder = routesOrderByCost(routesYEN, routing.getK());
         
-        while(routesYEN.size() < ParametersSimulation.getKShortestRoutes()){
-            routesYEN.add(null);
+        while(routesYENOrder.size() < ParametersSimulation.getKShortestRoutes()){
+            routesYENOrder.add(null);
         }
         
         return routesYENOrder;
     }
 
-    private static List<Route> routesOrderByCost(List<Route> routesYEN, int kRoute) {
+    private static List<Route> routesOrderByCost(List<Route> routesYEN, int kRoute) throws Exception {
 
         List<Route> routesOrder = new ArrayList<Route>();
 
-        for (int k = 1; k <= kRoute; k++){
+        int kValue = 1;
+        LOOP_ROUTE : while ((routesOrder.size() < kRoute) && (routesYEN.size() > 0)){
             double minCost = Double.MAX_VALUE;
             int bestRouteIndex = 0;
             for (int r = 0; r < routesYEN.size(); r++){
@@ -100,14 +105,32 @@ public class YEN {
                 }
             }
 
-            routesYEN.get(bestRouteIndex).setK(k);
+            Route route = routesYEN.get(bestRouteIndex);
 
-            routesOrder.add(routesYEN.get(bestRouteIndex));
+            // Avalia se a rota aceita o SNR, quando utilizada a camada física
+            if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+                ModulationLevelType lessModulation = ParametersSimulation.getMudulationLevelType()[ParametersSimulation.getMudulationLevelType().length - 1];
+    
+                int biggestBitRate = ParametersSimulation.getTrafficOption()[ParametersSimulation.getTrafficOption().length - 1]; 
+    
+                final double snrLinear = Math.pow(10, lessModulation.getSNRIndB()/10);
+
+                final double osnrLinear = (((double) biggestBitRate * 1e9) / (2 * SimulationParameters.getSpacing())) * snrLinear;
+
+                final double inBoundQot = Function.evaluateOSNR(route);
+
+                if(inBoundQot < osnrLinear){
+                    routesYEN.remove(bestRouteIndex);
+                    continue LOOP_ROUTE;			
+                }
+            }
+
+            route.setK(kValue);
+
+            routesOrder.add(route);
             routesYEN.remove(bestRouteIndex);
 
-            if (routesYEN.size() == 0){
-                break;
-            }
+            kValue++;
         }
 
         return routesOrder;

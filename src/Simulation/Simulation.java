@@ -250,6 +250,8 @@ public class Simulation {
 
                 if (ParametersSimulation.getPhysicalLayerOption().equals(ParametersSimulation.PhysicalLayerOption.Disabled)){
                     hasQoT = true;
+                } else {
+                    hasQoT = true;
                 }
 
 				if(hasSlots && hasQoT){
@@ -360,6 +362,8 @@ public class Simulation {
 				}
 
                 if (ParametersSimulation.getPhysicalLayerOption().equals(ParametersSimulation.PhysicalLayerOption.Disabled)){
+                    hasQoT = true;
+                } else {
                     hasQoT = true;
                 }
 

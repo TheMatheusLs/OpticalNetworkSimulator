@@ -61,19 +61,20 @@ public class World{
 
     private void runPopulationFitness(List<Individual> population) throws Exception {
         for (Individual individual : population){
+            if (individual.numberOfSimulations < 5){
+                double[] result = this.simulation.doSimulateGA(individual, Config.networkLoadGATraining);
 
-            double[] result = this.simulation.doSimulateGA(individual, Config.networkLoadGATraining);
+                individual.numberOfSimulations++;
 
-            individual.numberOfSimulations++;
+                if (individual.numberOfSimulations == 1){
+                    individual.fitness = result[0]; // Salva o fitness no indivíduo
+                } else {
+                    double meanFitness = individual.fitness;
 
-            if (individual.numberOfSimulations == 1){
-                individual.fitness = result[0]; // Salva o fitness no indivíduo
-            } else {
-                double meanFitness = individual.fitness;
+                    double newMeanFitness = ((meanFitness * (individual.numberOfSimulations - 1)) + result[0]) / individual.numberOfSimulations;
 
-                double newMeanFitness = ((meanFitness * (individual.numberOfSimulations - 1)) + result[0]) / individual.numberOfSimulations;
-
-                individual.fitness = newMeanFitness;
+                    individual.fitness = newMeanFitness;
+                }
             }
         }
     }
@@ -125,6 +126,7 @@ public class World{
 
         if (this.generationsCount % 5 == 0){
             this.saveBestsIndividuals();
+            this.saveAllIndividuals();
         }
     }
 
@@ -141,6 +143,21 @@ public class World{
 
             this.createFolder.writeFile(filename, solution);
         }
+    }
+
+    public void saveAllIndividuals() throws Exception {
+        List<Individual> firstRank = this.selectPopulation(this.populationOfIndividuals);
+
+        String allPopulation = "";
+
+        for (Individual individual : firstRank){
+            for (Gene gene : individual.chromosome){
+                allPopulation += String.format("%d,", gene.integerGene);
+            }
+            allPopulation += String.format("%f%n", individual.fitness);
+        }
+
+        this.createFolder.writeFile(String.format("Population_%d.csv", this.generationsCount), allPopulation);
     }
 
     public List<Individual> selectPopulation(List<Individual> population){

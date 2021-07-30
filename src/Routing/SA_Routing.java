@@ -4,6 +4,7 @@ import java.util.List;
 
 import src.ParametersSimulation;
 import src.GeneralClasses.Function;
+import src.ParametersSimulation.PhysicalLayerOption;
 import src.Types.ModulationLevelType;
 
 public class SA_Routing {
@@ -18,13 +19,11 @@ public class SA_Routing {
                 if (allModulations.length == 1){
                     reqNumbOfSlots = Function.getNumberSlots(ParametersSimulation.getMudulationLevelType()[0], bitRate);
                 } else {
-                    // int bitRateIndex = -1;
-                    // for (int b = 0; b <= allBitRates.length; b++){
-                    //     if (allBitRates[b] == bitRate){
-                    //         bitRateIndex = b;
-                    //         break;
-                    //     }
-                    // }
+                    if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+                        int bitRateIndex = Function.getBitRateIndex(bitRate);
+    
+                        reqNumbOfSlots = route.getNumberOfSlotsByBitRate(bitRateIndex);
+                    }
                 }
 
                 // Verifica se é possível alocar a requisição

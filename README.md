@@ -1,3 +1,3 @@
 # Simulador de Redes Ópticas Elásticas
 
-Adaptado dos simuladores Simtom e Simeon.
+Adaptado dos simuladores SIMTON e Simeon.

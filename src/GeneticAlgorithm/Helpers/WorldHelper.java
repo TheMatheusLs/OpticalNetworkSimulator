@@ -23,11 +23,12 @@ public class WorldHelper {
                 geneMapping = new ArrayList<int[]>();
                 geneMapping.add( new int[]{0,0,0,0});
                 geneMapping.add( new int[]{1,1,1,1});
-                geneMapping.add( new int[]{1,0,0,0});
-                geneMapping.add( new int[]{1,1,0,0});
                 geneMapping.add( new int[]{0,0,0,1});
-                geneMapping.add( new int[]{1,0,0,1});
                 geneMapping.add( new int[]{0,0,1,1});
+                geneMapping.add( new int[]{1,1,0,0});
+                geneMapping.add( new int[]{1,0,0,1});
+                geneMapping.add( new int[]{1,0,0,0});
+                geneMapping.add( new int[]{0,0,2,2});
     
                 return geneMapping;
             } else {
@@ -40,7 +41,28 @@ public class WorldHelper {
         
                     return geneMapping;
                 } else {
-                    return null;
+                    if (KYen == 5){
+                        geneMapping = new ArrayList<int[]>();
+                        geneMapping.add( new int[]{0,0,0,0,0});
+                        geneMapping.add( new int[]{1,1,1,1,1});
+                        geneMapping.add( new int[]{0,0,0,0,1});
+                        geneMapping.add( new int[]{0,0,0,1,1});
+                        geneMapping.add( new int[]{0,0,1,0,0});
+                        geneMapping.add( new int[]{0,0,1,1,1});
+                        geneMapping.add( new int[]{1,0,0,0,0});
+                        geneMapping.add( new int[]{1,0,0,0,1});
+                        geneMapping.add( new int[]{1,0,0,1,1});
+                        geneMapping.add( new int[]{1,1,0,0,0});
+                        geneMapping.add( new int[]{1,1,1,0,0});
+                        geneMapping.add( new int[]{0,0,2,2,2});
+                        geneMapping.add( new int[]{0,0,0,2,2});
+                        geneMapping.add( new int[]{1,0,0,2,2});
+                        geneMapping.add( new int[]{0,0,2,2,1});
+            
+                        return geneMapping;
+                    } else {
+                        return null;
+                    }
                 }
             }
         } else {
@@ -255,15 +277,7 @@ public class WorldHelper {
                     gene.add(Integer.parseInt(bitGeneStr));
                 }
                 
-                int integerGene = -1;
-                LOOP_GENE:for (int g = 0; g < WorldHelper.geneMapping.size(); g++){
-                    for (int bGene = 0; bGene < gene.size(); bGene++){
-                        if (gene.get(bGene) != WorldHelper.geneMapping.get(g)[bGene]){
-                            continue LOOP_GENE;
-                        } 
-                    }
-                    integerGene = g;
-                }
+                int integerGene = gene.get(0);
 
                 sequenceOfGenes.add(new Gene(integerGene, s, d));
             }

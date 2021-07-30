@@ -17,7 +17,7 @@ public class HHRSAAlgorithm {
 
         int[] genesBitsOD = WorldHelper.geneMapping.get(geneOD.integerGene);
 
-        List<Integer> heuristicsOrder = new ArrayList<Integer>();;
+        List<Integer> heuristicsOrder = new ArrayList<Integer>();
         for (int i = 0; i < genesBitsOD.length; i++){
             if (i == 0){
                 heuristicsOrder.add(genesBitsOD[i]);

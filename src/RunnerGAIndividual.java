@@ -22,8 +22,8 @@ public class RunnerGAIndividual {
 
         //Individual individual = WorldHelper.GenerateIndividualInteger(Config.numberOfNodes, 0);
 
-        String folder = "15-07-21_19-05-31_NSFNet_YEN_RunnerGATraining";
-		String filename = "Solution_110_3.csv";
+        String folder = "24-07-21_15-36-22_NSFNet_YEN_RunnerGATraining_Good";
+		String filename = "Solution_75_1.csv";
 
 		Individual individual = WorldHelper.ReadIndividualFromFile(folder, filename);
 

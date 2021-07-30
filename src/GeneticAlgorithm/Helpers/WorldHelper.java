@@ -13,7 +13,6 @@ import src.GeneticAlgorithm.Gene;
 import src.GeneticAlgorithm.Individual;
 
 public class WorldHelper {
-    private static Random random = new Random();
 
     public static List<int[]> geneMapping = WorldHelper.createGeneMapping(ParametersSimulation.getKShortestRoutes());
 
@@ -23,21 +22,21 @@ public class WorldHelper {
             if (KYen == 4){
                 geneMapping = new ArrayList<int[]>();
                 geneMapping.add( new int[]{0,0,0,0});
+                geneMapping.add( new int[]{1,1,1,1});
                 geneMapping.add( new int[]{1,0,0,0});
                 geneMapping.add( new int[]{1,1,0,0});
                 geneMapping.add( new int[]{0,0,0,1});
                 geneMapping.add( new int[]{1,0,0,1});
                 geneMapping.add( new int[]{0,0,1,1});
-                geneMapping.add( new int[]{1,1,1,1});
     
                 return geneMapping;
             } else {
                 if (KYen == 3){
                     geneMapping = new ArrayList<int[]>();
                     geneMapping.add( new int[]{0,0,0});
+                    geneMapping.add( new int[]{1,1,1});
                     geneMapping.add( new int[]{1,0,0});
                     geneMapping.add( new int[]{0,0,1});
-                    geneMapping.add( new int[]{1,1,1});
         
                     return geneMapping;
                 } else {
@@ -66,13 +65,14 @@ public class WorldHelper {
 
     }
 
-    public static List<Individual> SpawnPopulation() throws Exception{
+    public static List<Individual> SpawnPopulation(Random randomGA) throws Exception{
         List<Individual> population = new ArrayList<Individual>();
 
-        // Cria um indivíduo todo igual a 0
-        //population.add(GenerateIndividualInteger(Config.numberOfNodes, 0));
-        // Cria um indivíduo todo igual a 1
-        //population.add(GenerateIndividualInteger(Config.numberOfNodes, 6));
+        // Inicia um indivíduo com todos os genes da população
+        for (int geneSolution = 0; geneSolution < WorldHelper.geneMapping.size(); geneSolution++){
+            population.add(GenerateIndividualInteger(Config.numberOfNodes, geneSolution));
+        }
+
         // Cria um indivíduo com a melhor solução HRSA
         // String folder = "05-07-21_12-18-55_NSFNET_14_ALTERNATIVO_GA_MO_HRSA_K=4_GA_Training";
 		// String filename = "Solution_150_1.csv";
@@ -82,10 +82,8 @@ public class WorldHelper {
 
         while (population.size() < Config.populationCounts)
         {
-            Individual individual = GenerateIndividualInteger(Config.numberOfNodes);
+            Individual individual = GenerateIndividualInteger(Config.numberOfNodes, randomGA);
 
-            //TODO: Mudar essa verfificação
-            //if (!population.contains(individual))
             if (!populationContainsThisIndividual(population, individual))
             {
                 population.add(individual);
@@ -130,7 +128,7 @@ public class WorldHelper {
         return new Individual(sequenceOfGenes);
     }
 
-    private static Individual GenerateIndividualInteger(int numberOfNodes) {
+    private static Individual GenerateIndividualInteger(int numberOfNodes, Random randomGA) {
 
         List<Gene> sequenceOfGenes = new ArrayList<Gene>();
         for (int s = 0; s < numberOfNodes; s++){
@@ -140,7 +138,7 @@ public class WorldHelper {
                     continue;
                 }
 
-                int integerGene = random.nextInt(WorldHelper.geneMapping.size());
+                int integerGene = randomGA.nextInt(WorldHelper.geneMapping.size());
 
                 sequenceOfGenes.add(new Gene(integerGene, s, d));
             }
@@ -149,14 +147,14 @@ public class WorldHelper {
         return new Individual(sequenceOfGenes);
     }
 
-    public static Individual[] GetCandidateParents(List<Individual> population){
+    public static Individual[] GetCandidateParents(List<Individual> population, Random randomGA){
 
         Individual[] individuals = new Individual[Config.numberOfCompetitors];
 
         for (int c = 0; c < Config.numberOfCompetitors; c++){
 
             LOOP_IND : while (true) {
-                Individual candidate = population.get(random.nextInt(population.size()));
+                Individual candidate = population.get(randomGA.nextInt(population.size()));
                 
                 for (Individual individual : individuals){
                     if (individual == candidate){
@@ -188,24 +186,25 @@ public class WorldHelper {
         
     }
 
-    public static Individual[] Mutate(Individual individualA, Individual individualB)
+    public static Individual[] Mutate(Individual individualA, Individual individualB, Random randomGA)
     {
-        Individual newIndividualA = new Individual(individualA.chromosome);
-        Individual newIndividualB = new Individual(individualB.chromosome);
+        Individual newIndividualA = doMutate(individualA, randomGA);
 
-        newIndividualA = doMutate(individualA);
-
-        newIndividualB = doMutate(individualB);
+        Individual newIndividualB = doMutate(individualB, randomGA);
         
         return new Individual[]{newIndividualA, newIndividualB};  
     }
 
-    private static Individual doMutate(Individual individual){
+    private static Individual doMutate(Individual individual, Random randomGA){
+
+        List<Gene> chromosome = new ArrayList<Gene>();
+
+        int mutation = 0;
 
         // Para cada gene
         for (int geneIndex = 0; geneIndex < individual.chromosome.size(); geneIndex++){
 
-            if (random.nextDouble() < Config.mutationChance){
+            if (randomGA.nextDouble() < Config.mutationChance){
 
                 Gene currentGene = individual.chromosome.get(geneIndex);
                 int geneCurrentValue = currentGene.integerGene;
@@ -217,13 +216,22 @@ public class WorldHelper {
                     }
                 }
 
-                currentGene.integerGene = possiblesValuesForGene.get(random.nextInt(possiblesValuesForGene.size()));
+                int geneMutateValue = possiblesValuesForGene.get(randomGA.nextInt(possiblesValuesForGene.size()));
 
-                individual.chromosome.set(geneIndex, currentGene);
+                Gene geneMutate = new Gene(geneMutateValue, currentGene.source, currentGene.destination);
+
+                chromosome.add(geneMutate);
+
+                mutation++;
+            } else {
+                chromosome.add(individual.chromosome.get(geneIndex));
             }
         }
 
-        return individual;
+        Individual newIndividual = new Individual(chromosome);
+        newIndividual.mutation = mutation;
+
+        return newIndividual;
     }
 
     public static Individual ReadIndividualFromFile(String folder, String filename) throws FileNotFoundException {
@@ -276,7 +284,7 @@ public class WorldHelper {
         return true;
     }
 
-    public static Individual BiasedRandomSelection(List<Individual> populationCandidate) throws Exception {
+    public static Individual BiasedRandomSelection(List<Individual> populationCandidate, Random randomGA) throws Exception {
 
         double sum = 0;
         for (Individual individual : populationCandidate){
@@ -306,7 +314,7 @@ public class WorldHelper {
             cumulativeProportions.add(cumulativeTotal);
         }
 
-        double selectedValue = random.nextDouble();
+        double selectedValue = randomGA.nextDouble();
 
         for (int i = 0; i < cumulativeProportions.size(); i++){
             double value = cumulativeProportions.get(i);
@@ -320,15 +328,15 @@ public class WorldHelper {
         throw new Exception("O que aconteceu aqui?");
     }
 
-    public static Individual[] DoCrossoverUniforme(Individual individualA, Individual individualB){
+    public static Individual[] DoCrossoverUniforme(Individual individualA, Individual individualB, Random randomGA){
 
         // Cria inidivíduos temporários
-        Individual offSpringA = GenerateIndividualInteger( Config.numberOfNodes);
-        Individual offSpringB = GenerateIndividualInteger( Config.numberOfNodes);
+        Individual offSpringA = GenerateIndividualInteger( Config.numberOfNodes, randomGA);
+        Individual offSpringB = GenerateIndividualInteger( Config.numberOfNodes, randomGA);
 
         //Para cada gene
         for (int geneIndex = 0; geneIndex < individualA.chromosome.size(); geneIndex++){
-            if (random.nextDouble() > Config.crossoverChance){
+            if (randomGA.nextDouble() < Config.crossoverChance){
                 offSpringA.chromosome.set(geneIndex, individualA.chromosome.get(geneIndex));
                 offSpringB.chromosome.set(geneIndex, individualB.chromosome.get(geneIndex));
             } else {
@@ -339,4 +347,34 @@ public class WorldHelper {
 
         return new Individual[]{offSpringA, offSpringB};
     }
-}   
+
+    public static Individual DoCrossover(Individual individualA, Individual individualB, int crossoverPosition_A, int crossoverPosition_B, Random randomGA)
+    {
+        crossoverPosition_A = crossoverPosition_A == -1 
+            ? 1 + randomGA.nextInt(individualA.chromosome.size() - 2)
+            : crossoverPosition_A;
+
+        crossoverPosition_B = crossoverPosition_B == -1 
+            ? 1 + randomGA.nextInt(individualA.chromosome.size() - 2)
+            : crossoverPosition_B;
+
+        int firstIndex = crossoverPosition_A < crossoverPosition_B ?  crossoverPosition_A : crossoverPosition_B;
+        int secondIndex = crossoverPosition_A < crossoverPosition_B ?  crossoverPosition_B : crossoverPosition_A;
+
+
+        List<Gene> offspringGenes = new ArrayList<Gene>();
+        for (int i = 0; i < firstIndex; i++){
+            offspringGenes.add(individualA.chromosome.get(i));
+        }
+
+        for (int i = firstIndex; i < secondIndex; i++){
+            offspringGenes.add(individualB.chromosome.get(i));
+        }
+
+        for (int i = secondIndex; i < individualA.chromosome.size(); i++){
+            offspringGenes.add(individualA.chromosome.get(i));
+        }
+
+        return new Individual(offspringGenes);
+    }
+}

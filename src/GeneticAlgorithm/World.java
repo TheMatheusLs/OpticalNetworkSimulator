@@ -10,7 +10,7 @@ import src.Simulation.Simulation;
 
 public class World{
     
-    Random randomGenarationGA = new Random();
+    Random randomGenarationGA;
 
     public List<Individual> populationOfIndividuals;
 
@@ -34,12 +34,13 @@ public class World{
         populationOfIndividuals = new ArrayList<Individual>();
         fitnessOverTimer = new ArrayList<Double>();
 
-		this.simulation.initialize(createFolder);
+        this.randomGenarationGA = new Random();
 
+		this.simulation.initialize(createFolder);
     }
 
     public void Spawn() throws Exception{
-        this.populationOfIndividuals.addAll(WorldHelper.SpawnPopulation());
+        this.populationOfIndividuals.addAll(WorldHelper.SpawnPopulation(randomGenarationGA));
 
         // Simula os indivíduos para encontrar os fitness
         this.runPopulationFitness(this.populationOfIndividuals);
@@ -104,24 +105,21 @@ public class World{
             offspring.add(offspringAB[1]);
 
         }
-
-        // Simula os indivíduos para encontrar os fitness
-        this.runPopulationFitness(offspring);
-
+        
         // Adiciona os novos filhos na população de pais
         this.populationOfIndividuals.addAll(offspring);
-        
+
+        // Simula os indivíduos para encontrar os fitness
+        this.runPopulationFitness(this.populationOfIndividuals);
+
         // Encontra os melhores novos indivíduos
-        //List<Individual> newPopulation = this.findBestsIndividuals(this.populationOfIndividuals);
+        List<Individual> newPopulation = this.selectPopulation(this.populationOfIndividuals);
 
-        // Completa a população com indivíduos aleátorio
-        //this.completePopulationWithRandoms(newPopulation);
+        this.populationOfIndividuals.clear();
 
-        //this.populationOfIndividuals.clear();
-
-        // for (Individual individual : newPopulation){
-        //     this.populationOfIndividuals.add(individual);
-        // }
+        for (Individual individual : newPopulation){
+            this.populationOfIndividuals.add(individual);
+        }
 
         this.saveFitnessGeneration();
 
@@ -130,35 +128,8 @@ public class World{
         }
     }
 
-    private void completePopulationWithRandoms(List<Individual> population) {
-        while (population.size() < Config.populationCounts){
-            List<Individual> populationOut = new ArrayList<Individual>();
-            for (Individual individual : this.populationOfIndividuals){
-                populationOut.add(individual);
-            }
-
-            for (Individual individual : population){
-                populationOut.remove(individual);
-            }
-
-            LOOP_INDIVIDUAL:while (true){
-                Individual individualToAdd = populationOut.get(randomGenarationGA.nextInt(populationOut.size()-1));
-
-                for (Individual individualInNewPopulation: population){
-                    if (WorldHelper.isIndividualHasSameSequence(individualInNewPopulation, individualToAdd)){
-                        continue LOOP_INDIVIDUAL;
-                    }
-                }
-
-                population.add(individualToAdd);
-                
-                break LOOP_INDIVIDUAL;
-            }
-        }
-    }
-
     public void saveBestsIndividuals() throws Exception {
-        List<Individual> firstRank = this.findBestsIndividuals(this.populationOfIndividuals);
+        List<Individual> firstRank = this.selectPopulation(this.populationOfIndividuals);
 
         for (int index = 0; index < 3; index++){
             String filename = String.format("Solution_%d_%d.csv", this.generationsCount, (index + 1));
@@ -172,13 +143,16 @@ public class World{
         }
     }
 
-    public List<Individual> findBestsIndividuals(List<Individual> population){
-        ArrayList<Individual> newPopulation = new ArrayList<Individual>();
-        ArrayList<Individual> populationCopy = new ArrayList<Individual>();
+    public List<Individual> selectPopulation(List<Individual> population){
+
+        List<Individual> newPopulation = new ArrayList<Individual>();
+
+        List<Individual> populationCopy = new ArrayList<Individual>();
         for (Individual individual : population){
             populationCopy.add(individual);
         }
 
+        // Seleciona os melhores indivíduos para a população. De acordo com a taxa. 
         while ((newPopulation.size() < (Config.populationCounts * Config.bestIndividuals) ) && (populationCopy.size() > 0)){
             Individual bestIndividual = null;
             double bestFitness = Double.MAX_VALUE / 3;
@@ -193,11 +167,21 @@ public class World{
             newPopulation.add(bestIndividual);
         }
 
+        // Completa com indivíduos aleatorios.
+        while ((newPopulation.size() < Config.populationCounts) && (populationCopy.size() > 0)){
+
+            Individual individualToAdd = populationCopy.get(randomGenarationGA.nextInt(populationCopy.size()));
+
+            populationCopy.remove(individualToAdd);
+
+            newPopulation.add(individualToAdd);
+        }
+
         return newPopulation;
     } 
 
     public Individual getParent(List<Individual> populationCandidate) throws Exception{
-        if (randomGenarationGA.nextDouble() > 1){
+        if (randomGenarationGA.nextDouble() > 0.5){
             // Torneio
             return TournamentSelection(populationCandidate);
         } else {
@@ -208,7 +192,7 @@ public class World{
 
     private Individual TournamentSelection(List<Individual> populationCandidate){
         if (populationCandidate.size() >= 2){
-            Individual[] candidates = WorldHelper.GetCandidateParents(populationCandidate);
+            Individual[] candidates = WorldHelper.GetCandidateParents(populationCandidate, randomGenarationGA);
             return WorldHelper.tournamentSelection(candidates);
         } else {
             if (populationCandidate.size() == 1){
@@ -221,7 +205,7 @@ public class World{
 
     private Individual BiasedRandomSelection(List<Individual> populationCandidate) throws Exception{
         if (populationCandidate.size() >= 2){
-            return WorldHelper.BiasedRandomSelection(populationCandidate);
+            return WorldHelper.BiasedRandomSelection(populationCandidate, randomGenarationGA);
         } else {
             if (populationCandidate.size() == 1){
                 return populationCandidate.get(0);
@@ -241,11 +225,31 @@ public class World{
 
     private Individual[] getOffspring(Individual individualA, Individual individualB)
     {   
-        return WorldHelper.DoCrossoverUniforme(individualA, individualB);
+        return WorldHelper.DoCrossoverUniforme(individualA, individualB, randomGenarationGA);
+    }
+
+    private Individual[] getOffspring2(Individual individualA, Individual individualB)
+    {   
+        if (randomGenarationGA.nextDouble() <= Config.crossoverChance){
+            int cutPos_A = 1 + randomGenarationGA.nextInt(individualA.chromosome.size() - 2);
+            int cutPos_B = 1 + randomGenarationGA.nextInt(individualA.chromosome.size() - 2);
+
+            while (cutPos_A == cutPos_B){
+                cutPos_B = 1 + randomGenarationGA.nextInt(individualA.chromosome.size() - 2);
+            }
+
+            // Generate the offspring from our selected parents
+            Individual offspringA = WorldHelper.DoCrossover(individualA, individualB, cutPos_A, cutPos_B, randomGenarationGA);
+            Individual offspringB = WorldHelper.DoCrossover(individualB, individualA, cutPos_A, cutPos_B, randomGenarationGA);
+
+            return new Individual[]{offspringA, offspringB};
+        } else {
+            return new Individual[]{individualA, individualB};
+        }
     }
 
     private Individual[] mutate(Individual individualA, Individual individualB)
     {
-        return WorldHelper.Mutate(individualA, individualB);
+        return WorldHelper.Mutate(individualA, individualB, randomGenarationGA);
     }
 }

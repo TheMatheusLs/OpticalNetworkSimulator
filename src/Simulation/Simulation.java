@@ -384,7 +384,7 @@ public class Simulation {
             limitCallRequest = i;
 
             if (ParametersSimulation.getStopCriteria().equals(ParametersSimulation.StopCriteria.BlockedCallRequest)){
-                if ((numBlockBySlots + numBlockByQoT) >= 1000){
+                if ((numBlockBySlots + numBlockByQoT) >= ParametersSimulation.getMaxNumberOfBlockedRequests()){
                     break LOOP_REQ;
                 }
             }

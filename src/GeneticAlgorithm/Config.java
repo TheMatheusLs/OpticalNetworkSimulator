@@ -3,11 +3,11 @@ package src.GeneticAlgorithm;
 public class Config {
     public static final int populationCounts = 50;
     public static final int numberOfNodes = 14;
-    public static final double bestIndividuals = 0.80;
+    public static final double bestIndividuals = 0.8;
     public static final double crossoverChance = 0.5;
     public static final double mutationChance = 0.01;
     public static final int numberOfCompetitors = 3;
-    public static final int maxGenerations = 300;
+    public static final int maxGenerations = 500;
     public static final int maxNoImprovementCount = 150;
     public final static double networkLoadGATraining = 260;
 

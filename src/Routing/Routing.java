@@ -249,8 +249,8 @@ public class Routing {
 
 
         for (List<Route> routesOD : this.allRoutes){
-            if ((routesOD != null) && (routesOD.size() > 0)){
-                for (Route mainRoutes : routesOD){
+            for (Route mainRoutes : routesOD){
+                if (mainRoutes != null){
                     allRoutesAux.add(mainRoutes);
                 }
             }
@@ -448,5 +448,27 @@ public class Routing {
     public void setRoutes(int orN, int deN, List<Route> routes) {
         this.clearRoutes(orN, deN);
         this.addRoutes(orN, deN, routes);
+    }
+
+    public String allSpectrumRoutes() {
+
+        String allSpectrum = "";
+
+        for (List<Route> routesOD : this.allRoutes){
+            for (Route mainRoutes : routesOD){
+                if (mainRoutes == null){
+                    continue;
+                }
+
+                allSpectrum += String.format("%d,%d,%d,", mainRoutes.origin, mainRoutes.destination, mainRoutes.getConflictRoute().size());
+
+                for (int slot = 0; slot < ParametersSimulation.getNumberOfSlotsPerLink() - 1; slot++){
+                    allSpectrum += String.format("%d-", mainRoutes.getSlotValue(slot));  
+                }
+                allSpectrum += String.format("%d%n", mainRoutes.getSlotValue(ParametersSimulation.getNumberOfSlotsPerLink()-1));
+            }
+        }
+
+        return allSpectrum;
     }
 }

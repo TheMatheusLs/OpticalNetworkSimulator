@@ -245,26 +245,6 @@ public class World{
         return WorldHelper.DoCrossoverUniforme(individualA, individualB, randomGenarationGA);
     }
 
-    private Individual[] getOffspring2(Individual individualA, Individual individualB)
-    {   
-        if (randomGenarationGA.nextDouble() <= Config.crossoverChance){
-            int cutPos_A = 1 + randomGenarationGA.nextInt(individualA.chromosome.size() - 2);
-            int cutPos_B = 1 + randomGenarationGA.nextInt(individualA.chromosome.size() - 2);
-
-            while (cutPos_A == cutPos_B){
-                cutPos_B = 1 + randomGenarationGA.nextInt(individualA.chromosome.size() - 2);
-            }
-
-            // Generate the offspring from our selected parents
-            Individual offspringA = WorldHelper.DoCrossover(individualA, individualB, cutPos_A, cutPos_B, randomGenarationGA);
-            Individual offspringB = WorldHelper.DoCrossover(individualB, individualA, cutPos_A, cutPos_B, randomGenarationGA);
-
-            return new Individual[]{offspringA, offspringB};
-        } else {
-            return new Individual[]{individualA, individualB};
-        }
-    }
-
     private Individual[] mutate(Individual individualA, Individual individualB)
     {
         return WorldHelper.Mutate(individualA, individualB, randomGenarationGA);

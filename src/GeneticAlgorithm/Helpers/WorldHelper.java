@@ -19,58 +19,16 @@ public class WorldHelper {
     private static List<int[]> createGeneMapping(int KYen) {
 
         if (ParametersSimulation.getGaOption().equals(ParametersSimulation.GAOption.GAHHRSAEnable)){
-            if (KYen == 4){
-                geneMapping = new ArrayList<int[]>();
-                geneMapping.add( new int[]{0,0,0,0});
-                geneMapping.add( new int[]{1,1,1,1});
-                geneMapping.add( new int[]{0,0,0,1});
-                geneMapping.add( new int[]{0,0,1,1});
-                geneMapping.add( new int[]{1,1,0,0});
-                geneMapping.add( new int[]{1,0,0,1});
-                geneMapping.add( new int[]{1,0,0,0});
-                geneMapping.add( new int[]{0,0,2,2});
-    
-                return geneMapping;
-            } else {
-                if (KYen == 3){
-                    geneMapping = new ArrayList<int[]>();
-                    geneMapping.add( new int[]{0,0,0});
-                    geneMapping.add( new int[]{1,1,1});
-                    geneMapping.add( new int[]{1,0,0});
-                    geneMapping.add( new int[]{0,0,1});
-        
-                    return geneMapping;
-                } else {
-                    if (KYen == 5){
-                        geneMapping = new ArrayList<int[]>();
-                        geneMapping.add( new int[]{0,0,0,0,0});
-                        geneMapping.add( new int[]{1,1,1,1,1});
-                        geneMapping.add( new int[]{0,0,0,0,1});
-                        geneMapping.add( new int[]{0,0,0,1,1});
-                        geneMapping.add( new int[]{0,0,1,0,0});
-                        geneMapping.add( new int[]{0,0,1,1,1});
-                        geneMapping.add( new int[]{1,0,0,0,0});
-                        geneMapping.add( new int[]{1,0,0,0,1});
-                        geneMapping.add( new int[]{1,0,0,1,1});
-                        geneMapping.add( new int[]{1,1,0,0,0});
-                        geneMapping.add( new int[]{1,1,1,0,0});
-                        geneMapping.add( new int[]{0,0,2,2,2});
-                        geneMapping.add( new int[]{0,0,0,2,2});
-                        geneMapping.add( new int[]{1,0,0,2,2});
-                        geneMapping.add( new int[]{0,0,2,2,1});
             
-                        return geneMapping;
-                    } else {
-                        return null;
-                    }
-                }
-            }
+            return new HHRSACombinations(KYen).getSolutions();
+            
         } else {
             geneMapping = new ArrayList<int[]>();
 
             int[] bitGene = new int[ParametersSimulation.getKShortestRoutes()];
 
-            for (int i = 0; i < ParametersSimulation.getKShortestRoutes(); i++){
+            bitGene[0] = KYen;
+            for (int i = 1; i < ParametersSimulation.getKShortestRoutes(); i++){
                 bitGene[i] = 0;
             }
             geneMapping.add( bitGene );

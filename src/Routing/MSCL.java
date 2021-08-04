@@ -193,10 +193,26 @@ public class MSCL {
                 // Calcula a perda de capacidade na rota principal
                 lostCapacityTotal += capacityBeforeRoute - capacityAfterRoute;
 
-                List<Route> iRoutesOrder = iRoutesOrderBy(route.getConflictRoutesNonDominants(), 12 * route.getNumHops());
+                List<Route> iRoutes;
+                if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.AllRoutes)){
+                    iRoutes = route.getConflictRoute();
+                } else {
+                    if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.Dominant)){
+                        iRoutes = route.getConflictRoutesDominants();
+                    } else {
+                        if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.NonDominant)){
+                            iRoutes = route.getConflictRoutesNonDominants();
+                        } else {
+                            if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.None)){
+                                iRoutes = null;
+                            } else {
+                                throw new Exception("Uma métrica diferente de disable teve ser selecionada.");
+                            }
+                        }
+                    }
+                }
 
-                //for (Route iRoute: route.getConflictRoute()){
-                for (Route iRoute: iRoutesOrder){
+                for (Route iRoute: iRoutes){
 
                     // Busca o mínimo a esquerda
                     int minSlot = findSlotLeft(iRoute, startSlot);

@@ -11,16 +11,16 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 240;
+    final static double minLoadNetwork = 280;
     final static double maxLoadNetwork = 300;
-    final static int numberOfPointsLoadNetwork = 1;
+    final static int numberOfPointsLoadNetwork = 3;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
     final static int numberOfSlotsPerLink = 128;
     final static long maxNumberOfRequisitions = (long) 1e6;
     final static int maxNumberOfBlockedRequests = 500;
 
-    final static int kShortestRoutes = 4;
+    final static int kShortestRoutes = 3;
     
     final static int numberOfPolarizations = 2;
     final static int guardBandSize = 0;
@@ -28,17 +28,22 @@ public class ParametersSimulation{
     final static int mainSeed = 42;
     
     final static TopologyType topologyType = TopologyType.NSFNet;
-    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.YEN;
-    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.FirstFit;
+    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado;
+    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
     final static LinkCostType linkCostType = LinkCostType.Hops;
     final static int[] trafficOption = new int[]{100, 200, 400};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
-    final static GAOption GAOptionType = GAOption.GAHHRSAEnable;
+    final static GAOption GAOptionType = GAOption.GADisabled;
     final static StopCriteria stopCriteria = StopCriteria.BlockedCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
+    
+    final static DebugOptions debugOptions = DebugOptions.Disable;
+    
+    final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes;
+    final static double interRoutesMSCLFactor = 1.0;
 
 	final static ModulationLevelType[] mudulationLevelType = {
 		ModulationLevelType.EIGHT_QAM,
@@ -145,12 +150,34 @@ public class ParametersSimulation{
     public static ModulationLevelType[] getMudulationLevelType() {
         return mudulationLevelType;
     }
+    
+    public static DebugOptions getDebugOptions() {
+        return debugOptions;
+    }
+
+    public static InterRoutesMSCL getInterRoutesMSCL() {
+        return interRoutesMSCL;
+    }
+
+    public enum DebugOptions{
+        Disable,
+        AllReqs;
+    }
+
+    public enum InterRoutesMSCL{
+        Disable,
+        AllRoutes,
+        Dominant,
+        NonDominant,
+        None;
+    }
 
     public enum TopologyType{
         NSFNet,
         Ring,
         Toroidal,
-        Finland;
+        Finland,
+        Simple;
     }
 
     public enum RoutingAlgorithmType{
@@ -242,13 +269,19 @@ public class ParametersSimulation{
         txt += String.format("linkCostType = %s\n", linkCostType.name());
 
         txt += String.format("resourceAllocationOption = %s\n", resourceAllocationOption.name());
+        txt += String.format("RSAOrderType = %s\n", RSAOrderType.name());
         txt += String.format("physicalLayerOption = %s\n", physicalLayerOption.name());
         txt += String.format("GAOptionType = %s\n", GAOptionType.name());
         txt += String.format("stopCriteria = %s\n", stopCriteria.name());
         txt += String.format("randomGeneration = %s\n", randomGeneration.name());
 
         txt += String.format("callRequestType = %s\n", callRequestType.name());
+
+        txt += String.format("debugOptions = %s\n", debugOptions.name());
+        txt += String.format("interRoutesMSCL = %s\n", interRoutesMSCL.name());
         
+        txt += String.format("interRoutesMSCLFactor = %f\n", interRoutesMSCLFactor);
+
         txt += "mudulationLevelType = ";
         for (int m = 0; m < getMudulationLevelType().length - 1; m++){
             txt += String.format("%d-QAM, ", getMudulationLevelType()[m].getConstelation());

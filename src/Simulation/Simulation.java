@@ -15,6 +15,7 @@ import src.ParametersSimulation;
 import src.CallRequest.CallRequestList;
 import src.CallRequest.CallRequest;
 import src.Parameters.SimulationParameters;
+import src.ParametersSimulation.PhysicalLayerOption;
 import src.GeneralClasses.Function;
 import src.GeneticAlgorithm.Config;
 import src.GeneticAlgorithm.Individual;
@@ -347,9 +348,14 @@ public class Simulation {
 
             if (route != null){
 
-                callRequest.setModulationType(ParametersSimulation.getMudulationLevelType()[0]);
+                int reqNumbOfSlots;
                 
-                final int reqNumbOfSlots = Function.getNumberSlots(callRequest.getModulationType(), callRequest.getBitRate());
+                if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+                    int bitRateIndex = Function.getBitRateIndex(bitRate);
+                    reqNumbOfSlots = route.getNumberOfSlotsByBitRate(bitRateIndex);
+                } else {
+                    reqNumbOfSlots = Function.getNumberSlots(ParametersSimulation.getMudulationLevelType()[0], bitRate);
+                }
 				
                 callRequest.setRequiredNumberOfSlots(reqNumbOfSlots);
 
@@ -359,7 +365,11 @@ public class Simulation {
 
                 if(!slots.isEmpty() && slots.size() == reqNumbOfSlots){	// NOPMD by Andr� on 13/06/17 13:12
 					hasSlots = true;
-				}
+				} else {
+                    if (!slots.isEmpty()){
+                        throw new Exception("A requisição não obtive o valor correto para os slots");
+                    }
+                }
 
                 if (ParametersSimulation.getPhysicalLayerOption().equals(ParametersSimulation.PhysicalLayerOption.Disabled)){
                     hasQoT = true;
@@ -384,6 +394,11 @@ public class Simulation {
 			}else if(!hasQoT){
 				numBlockByQoT++; 
 			}
+
+            if (ParametersSimulation.getDebugOptions().equals(ParametersSimulation.DebugOptions.AllReqs)){
+                new java.io.File(folderToSave.getFolderCompletePath(), "LogReq").mkdirs();
+                folderToSave.writeFile(String.format("LogReq//Req_%010d.csv", i), routing.allSpectrumRoutes());
+            }
 
             limitCallRequest = i;
 

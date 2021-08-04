@@ -177,7 +177,11 @@ public class Topology {
             if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.Finland)){
                 return FinlandDimention.getLength();
             } else {
-                throw new Exception("Topologia inválida!");
+                if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.Simple)){
+                    return SimpleDimention.getLength();
+                } else {
+                    throw new Exception("Topologia inválida!");
+                }
             }
         }
     }

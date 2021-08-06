@@ -51,6 +51,10 @@ public class Route {
      * Conjuntos de Links que ligam o destino a origem;
      */
 	private List<OpticalLink> downLink;
+    /**
+     * Custo do valor acumulado para todos os enlaces
+     */
+    int betweennessCost;
 
 	private List<Route> conflictRoutes;
     private List<Route> conflictRoutesDominants;
@@ -79,6 +83,8 @@ public class Route {
         this.pathNodes = new ArrayList<OpticalSwitch>();
         this.pathLinks = new ArrayList<OpticalLink>();
         this.cost = 0.0;
+
+        this.betweennessCost = 0;
 
         this.conflictRoutes = new ArrayList<Route>();
         this.conflictRoutesDominants = new ArrayList<Route>();
@@ -392,5 +398,13 @@ public class Route {
 
     public int getNumberOfSlotsByBitRate(int index){
         return this.slotsByBitrate.get(index);
+    }
+
+    public void setBetweennessCost(int betweennessCostRoute) {
+        this.betweennessCost = betweennessCostRoute;
+    }
+
+    public int getBetweennessCost() {
+        return this.betweennessCost;
     }
 }

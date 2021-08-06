@@ -55,11 +55,64 @@ public class Routing {
         this.generateDominantConflictRoutes();
         this.generateNonDominantConflictRoutes();
 
+        // Cria o Betweenness para as rotas
+        this.generateBetweennessRoutes();
+
         if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
             this.findAllSizeSlotsAndModulationByRoute();
         }
         System.out.println(this);
     }
+
+    private void generateBetweennessRoutes() {
+
+        // Atribui o valor do betweenness ao enlaces
+        for (List<Route> routesOD : this.allRoutes){
+            for (Route mainRoute : routesOD){
+
+                // Verifica se a rota existe
+                if (mainRoute == null){
+                    continue;
+                }
+
+                for (OpticalLink link : mainRoute.getUpLink()){
+                    link.incrementBetweenness();
+                }
+
+                if (ParametersSimulation.getCallRequestType().equals(ParametersSimulation.CallRequestType.Bidirectional)){
+                    for (OpticalLink link : mainRoute.getDownLink()){
+                        link.incrementBetweenness();
+                    }
+                }
+            }
+        }
+
+        // Atribui o custo do betweenness as rotas
+        for (List<Route> routesOD : this.allRoutes){
+            for (Route mainRoute : routesOD){
+
+                // Verifica se a rota existe
+                if (mainRoute == null){
+                    continue;
+                }
+
+                int betweennessCostRoute = 0;
+
+                for (OpticalLink link : mainRoute.getUpLink()){
+                    betweennessCostRoute += link.getBetweenness();
+                }
+
+                if (ParametersSimulation.getCallRequestType().equals(ParametersSimulation.CallRequestType.Bidirectional)){
+                    for (OpticalLink link : mainRoute.getDownLink()){
+                        betweennessCostRoute += link.getBetweenness();
+                    }
+                }
+
+                mainRoute.setBetweennessCost(betweennessCostRoute);
+            }
+        }
+    }
+
     /**
      * Calcula qual a modulação e slots será usada para cada tipo de bitRate
      * @throws Exception

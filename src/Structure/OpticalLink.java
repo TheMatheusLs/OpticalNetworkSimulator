@@ -92,6 +92,10 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
      */
     int use;
 	/**
+	 * @brief Número de usos desse links por todo o cojunto de rotas
+	 */
+	int betweenness;
+	/**
 	 * Construtor da classe.
 	 * @param source
 	 * @param destination
@@ -116,6 +120,8 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
         this.linkState = true;
         this.utilization = 0;
         this.use = 0;
+
+		this.betweenness = 0;
 
 	}
 
@@ -634,4 +640,13 @@ public class OpticalLink {	 // NOPMD by Andr� on 29/05/17 11:42
 	private void resetPowerInSpan(final OpticalSpan span){
 		span.erasePowerInSpan();
 	}
+
+    public void incrementBetweenness() {
+		
+		this.betweenness += 1;
+    }
+
+    public int getBetweenness() {
+        return this.betweenness;
+    }
 }

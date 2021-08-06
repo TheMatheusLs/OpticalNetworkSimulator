@@ -212,7 +212,19 @@ public class MSCL {
                     }
                 }
 
-                for (Route iRoute: iRoutes){
+                List<Route> iRoutesFilter;
+
+                if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Hops)){
+                    iRoutesFilter = iRoutesOrderBy(iRoutes, ParametersSimulation.getInterRoutesMSCLFactor());
+                } else {
+                    if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Betweenness)){
+                        iRoutesFilter= iRoutesOrderByBetweenness(iRoutes, ParametersSimulation.getInterRoutesMSCLFactor());
+                    } else {
+                        throw new Exception("Parâmetro inválido | MSCLMetric");
+                    }
+                }
+
+                for (Route iRoute: iRoutesFilter){
 
                     // Busca o mínimo a esquerda
                     int minSlot = findSlotLeft(iRoute, startSlot);
@@ -293,7 +305,7 @@ public class MSCL {
         return bestLostCapacity;
     }
 
-    private List<Route> iRoutesOrderBy(List<Route> conflictRoute, int numberOfRoutes) {
+    List<Route> iRoutesOrderBy(List<Route> conflictRoute, double factor) {
         List<Route> conflictRouteAux = new ArrayList<Route>();
         List<Route> newIRoutesList = new ArrayList<Route>();
 
@@ -308,13 +320,13 @@ public class MSCL {
             }
         }
 
-        LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < numberOfRoutes)){
+        LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < (conflictRoute.size() * factor))){
             for (Route iRoute : conflictRouteAux){
                 if (maxCost == iRoute.getCost()){
                     newIRoutesList.add(iRoute);
                 }
 
-                if (newIRoutesList.size() == numberOfRoutes){
+                if (newIRoutesList.size() == (conflictRoute.size() * factor)){
                     break LOOP;
                 }
             }
@@ -331,6 +343,48 @@ public class MSCL {
             }
         }
 
+
+        return newIRoutesList;
+    }
+
+    private List<Route> iRoutesOrderByBetweenness(List<Route> conflictRoute, double factor) {
+
+        List<Route> conflictRouteAux = new ArrayList<Route>();
+        List<Route> newIRoutesList = new ArrayList<Route>();
+
+        Integer maxCost = Integer.MAX_VALUE;
+
+        // Encontra o maior custo
+        for (Route iRoute : conflictRoute){
+            conflictRouteAux.add(iRoute);
+
+            if (maxCost > iRoute.getBetweennessCost()){
+                maxCost = iRoute.getBetweennessCost();
+            }
+        }
+
+        LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < (conflictRoute.size() * factor))){
+            for (Route iRoute : conflictRouteAux){
+                if (maxCost == iRoute.getBetweennessCost()){
+                    newIRoutesList.add(iRoute);
+                }
+
+                if (newIRoutesList.size() == (conflictRoute.size() * factor)){
+                    break LOOP;
+                }
+            }
+
+            for (Route route : newIRoutesList){
+                conflictRouteAux.remove(route);
+            }
+
+            maxCost = Integer.MAX_VALUE;
+            for (Route iRoute : conflictRouteAux){
+                if (maxCost > iRoute.getBetweennessCost()){
+                    maxCost = iRoute.getBetweennessCost();
+                }
+            }
+        }
 
         return newIRoutesList;
     }

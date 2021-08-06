@@ -1,5 +1,6 @@
 package src;
 
+import src.Routing.MSCL;
 import src.Types.ModulationLevelType;
 
 /**
@@ -43,7 +44,8 @@ public class ParametersSimulation{
     final static DebugOptions debugOptions = DebugOptions.Disable;
     
     final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes;
-    final static double interRoutesMSCLFactor = 1.0;
+    final static double interRoutesMSCLFactor = 0.5;
+    final static MSCLMetric metricMSCL = MSCLMetric.Betweenness;
 
 	final static ModulationLevelType[] mudulationLevelType = {
 		ModulationLevelType.EIGHT_QAM,
@@ -159,6 +161,14 @@ public class ParametersSimulation{
         return interRoutesMSCL;
     }
 
+    public static double getInterRoutesMSCLFactor() {
+        return interRoutesMSCLFactor;
+    }
+
+    public static MSCLMetric getMSCLMetric() {
+        return metricMSCL;
+    }
+
     public enum DebugOptions{
         Disable,
         AllReqs;
@@ -170,6 +180,12 @@ public class ParametersSimulation{
         Dominant,
         NonDominant,
         None;
+    }
+
+    public enum MSCLMetric{
+        Disable,
+        Hops,
+        Betweenness;
     }
 
     public enum TopologyType{
@@ -281,6 +297,7 @@ public class ParametersSimulation{
         txt += String.format("interRoutesMSCL = %s\n", interRoutesMSCL.name());
         
         txt += String.format("interRoutesMSCLFactor = %f\n", interRoutesMSCLFactor);
+        txt += String.format("interRoutesMSCLFactor = %s\n", metricMSCL.name());
 
         txt += "mudulationLevelType = ";
         for (int m = 0; m < getMudulationLevelType().length - 1; m++){

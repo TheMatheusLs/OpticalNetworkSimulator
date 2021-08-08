@@ -5,6 +5,8 @@ import java.util.List;
 
 import src.ParametersSimulation;
 import src.GeneralClasses.Function;
+import src.GeneticAlgorithmMultiMSCL.GeneMSCL;
+import src.GeneticAlgorithmMultiMSCL.IndividualMSCL;
 import src.Parameters.SimulationParameters;
 import src.ParametersSimulation.PhysicalLayerOption;
 import src.ParametersSimulation.RoutingAlgorithmType;
@@ -171,7 +173,7 @@ public class Routing {
 
         // Percorre todas as rotas encontradas
         for (List<Route> routesOD : this.allRoutes){
-            LOOP_MAIN : for (Route mainRoute : routesOD){
+            for (Route mainRoute : routesOD){
                 
                 List<Route> dominatsRoutes = new ArrayList<Route>();
 
@@ -219,7 +221,7 @@ public class Routing {
 
         // Percorre todas as rotas encontradas
         for (List<Route> routesOD : this.allRoutes){
-            LOOP_MAIN : for (Route mainRoute : routesOD){
+            for (Route mainRoute : routesOD){
                 
                 List<Route> nonDominatsRoutes = new ArrayList<Route>();
 
@@ -523,5 +525,45 @@ public class Routing {
         }
 
         return allSpectrum;
+    }
+
+    public List<List<Route>> getAllRoutes(){
+        return this.allRoutes;
+    }
+
+    public void updateConflictRoutesForMSCL(IndividualMSCL individual) throws Exception {
+
+        int geneIndex = 0;
+        for (int s = 0; s < this.topology.getNumNodes(); s++){
+            for (int d = 0; d < this.topology.getNumNodes(); d++){
+            
+                if (s == d){
+                    continue;
+                }
+
+                Route route = allRoutes.get(s * this.topology.getNumNodes() + d).get(0);
+
+                int numberOfConflictRoutes = route.getConflictRoute().size();
+
+                GeneMSCL gene = individual.chromosome.get(geneIndex);
+
+                if ((gene.source == s) && (gene.destination == d) && (numberOfConflictRoutes == gene.bitsGenes.size())){
+                    List<Route> newRoutesConflict = new ArrayList<Route>(numberOfConflictRoutes);
+
+                    for (int index = 0; index < numberOfConflictRoutes; index++) {
+                        if (gene.bitsGenes.get(index)){
+                            newRoutesConflict.add(route.getConflictRoute().get(index));
+                        }
+                    }
+
+                    route.setConflictRoutesForMSCL(newRoutesConflict);
+
+                } else {
+                    throw new Exception("Erro na atribuição das rotas a partir do genes");
+                }
+
+                geneIndex++;
+            }
+        }
     }
 }

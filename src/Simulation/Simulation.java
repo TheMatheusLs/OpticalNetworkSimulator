@@ -17,8 +17,8 @@ import src.CallRequest.CallRequest;
 import src.Parameters.SimulationParameters;
 import src.ParametersSimulation.PhysicalLayerOption;
 import src.GeneralClasses.Function;
-import src.GeneticAlgorithm.Config;
 import src.GeneticAlgorithm.Individual;
+import src.GeneticAlgorithmMultiMSCL.IndividualMSCL;
 import src.Routing.HHRSAAlgorithm;
 
 import java.util.Random;
@@ -151,6 +151,43 @@ public class Simulation {
     }
 
 
+    public void simulateMultiLoadGA(IndividualMSCL individual) throws Exception{
+        
+        double step = 0; 
+        if (ParametersSimulation.getNumberOfPointSloadNetwork() >= 2){
+            step = (ParametersSimulation.getMaxLoadNetwork() - ParametersSimulation.getMinLoadNetwork()) / (ParametersSimulation.getNumberOfPointSloadNetwork() - 1);
+        }
+
+
+        for (int loadPoint = 0; loadPoint < ParametersSimulation.getNumberOfPointSloadNetwork(); loadPoint++){
+            double networkLoad = ParametersSimulation.getMaxLoadNetwork() - (step * loadPoint);
+
+            System.out.println(String.format("Simulando carga de %f", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration())));
+
+            List<Double> PBLoad = new ArrayList<Double>();
+            List<Double> TimeLoad = new ArrayList<Double>();
+
+            for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
+                
+                int seedSimulation = seedsForLoad[nSim-1];
+
+                this.randomGeneration = new Random(seedSimulation);
+
+                System.out.println(String.format("Simulação nº: %d com seed = %d", nSim, seedSimulation));
+
+                this.getRouting().updateConflictRoutesForMSCL(individual);
+
+                double[] results = this.simulateSingle((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()));
+                PBLoad.add(results[0]);
+                TimeLoad.add(results[1]);
+            }
+
+
+            this.folderToSave.writeInResults((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()) + "," + Function.getMeanList(PBLoad) + "," + 0 + "," + 0 + "," + 0 + "," + Function.getMeanList(TimeLoad));
+        }
+    }
+
+
     public double[] simulateSingle(double networkLoad) throws Exception{
 
         final long geralInitTime = System.currentTimeMillis();
@@ -199,6 +236,7 @@ public class Simulation {
 			List<Route> routeSolution = this.routing.getRoutesForOD(source, destination);
             Route route = null;
             List<Integer> slots = new ArrayList<>();
+
             if (ParametersSimulation.getRSAOrder().equals(ParametersSimulation.RSAOrder.Routing_SA)){
                 route = Routing_SA.findRoute(routeSolution, bitRate);
             } else {
@@ -292,13 +330,20 @@ public class Simulation {
 
 		if (limitCallRequest != 0){
             double PB = (double)(numBlockBySlots + numBlockByQoT) / limitCallRequest;
-			System.err.println("Erros Slots: " + numBlockBySlots + " Erros QoT: " + numBlockByQoT + " numReq: " + limitCallRequest + " PB: " + PB);
+			System.err.println("Erros Slots: " + numBlockBySlots + " Erros QoT: " + numBlockByQoT + " numReq: " + limitCallRequest + " PB: " + PB + " Time: " + (double)(geralFinalTime - geralInitTime) /1000);
 			return new double[] {PB, (double)(geralFinalTime - geralInitTime) /1000} ;
 		}
 		return new double[]{-1,-1};
     }
 
-
+    /**
+     * Método para simular um indivíduo do tipo HHRSA
+     * 
+     * @param individual
+     * @param network
+     * @return
+     * @throws Exception
+     */
     public double[] doSimulateGA(Individual individual, double network) throws Exception{
 
         final long geralInitTime = System.currentTimeMillis();
@@ -425,12 +470,15 @@ public class Simulation {
 		return new double[]{-1,-1};
     }
 
-
     void checkTopologyAndRouting() throws Exception{
         // Verifica se todos os links estão limpos
 		this.topology.checkIfIsClean();
 
 		// Verifica se todas as rotas estão limpas
         this.routing.checkIfIsClean();
+    }
+
+    public Routing getRouting(){
+        return this.routing;
     }
 }

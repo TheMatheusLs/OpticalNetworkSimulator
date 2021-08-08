@@ -59,6 +59,7 @@ public class Route {
 	private List<Route> conflictRoutes;
     private List<Route> conflictRoutesDominants;
     private List<Route> conflictRoutesNonDominants;
+    private List<Route> conflictRoutesForMSCL;
     /**
      * Lista que armazena a ocupação dos slots em todos os links da rota.
      */
@@ -89,6 +90,7 @@ public class Route {
         this.conflictRoutes = new ArrayList<Route>();
         this.conflictRoutesDominants = new ArrayList<Route>();
         this.conflictRoutesNonDominants = new ArrayList<Route>();
+        this.conflictRoutesForMSCL = new ArrayList<Route>();
 
         this.K = 1;
 
@@ -339,6 +341,14 @@ public class Route {
 		return this.conflictRoutesNonDominants;
 	}
 
+    public void setConflictRoutesForMSCL(List<Route> conflictRoutesForMSCL){
+		this.conflictRoutesForMSCL = conflictRoutesForMSCL;
+	}
+
+	public List<Route> getConflictRoutesForMSCL(){
+		return this.conflictRoutesForMSCL;
+	}
+
 	public void resetSlotValue(){
 		// Criar um vetor de disponibilidade 
 		this.slotOcupation = new short[ParametersSimulation.getNumberOfSlotsPerLink()];
@@ -384,8 +394,8 @@ public class Route {
 		this.slotOcupation[slot]--;
 	}
 
-    public void setModulationsTypeByBitrate(List<ModulationLevelType> modulationsTypeByBitrate){
-		this.modulationsTypeByBitrate = modulationsTypeByBitrate;
+    public void setModulationsTypeByBitrate(List<ModulationLevelType> modulationsTypeByBitrateAux){
+		this.modulationsTypeByBitrate = modulationsTypeByBitrateAux;
 	}
 
     public void setSizeSlotTypeByBitrate(List<Integer> slotsByBitrate){

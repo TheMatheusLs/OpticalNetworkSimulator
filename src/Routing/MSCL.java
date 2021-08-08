@@ -194,19 +194,23 @@ public class MSCL {
                 lostCapacityTotal += capacityBeforeRoute - capacityAfterRoute;
 
                 List<Route> iRoutes;
-                if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.AllRoutes)){
-                    iRoutes = route.getConflictRoute();
+                if (ParametersSimulation.getGaOption().equals(ParametersSimulation.GAOption.GAMSCL)){
+                    iRoutes = route.getConflictRoutesForMSCL();
                 } else {
-                    if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.Dominant)){
-                        iRoutes = route.getConflictRoutesDominants();
+                    if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.AllRoutes)){
+                        iRoutes = route.getConflictRoute();
                     } else {
-                        if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.NonDominant)){
-                            iRoutes = route.getConflictRoutesNonDominants();
+                        if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.Dominant)){
+                            iRoutes = route.getConflictRoutesDominants();
                         } else {
-                            if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.None)){
-                                iRoutes = null;
+                            if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.NonDominant)){
+                                iRoutes = route.getConflictRoutesNonDominants();
                             } else {
-                                throw new Exception("Uma métrica diferente de disable teve ser selecionada.");
+                                if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.None)){
+                                    iRoutes = null;
+                                } else {
+                                    throw new Exception("Uma métrica diferente de disable teve ser selecionada.");
+                                }
                             }
                         }
                     }
@@ -220,7 +224,11 @@ public class MSCL {
                     if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Betweenness)){
                         iRoutesFilter= iRoutesOrderByBetweenness(iRoutes, ParametersSimulation.getInterRoutesMSCLFactor());
                     } else {
-                        throw new Exception("Parâmetro inválido | MSCLMetric");
+                        if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Disable)){
+                            iRoutesFilter = iRoutes;
+                        } else {
+                            throw new Exception("Parâmetro inválido | MSCLMetric");
+                        }
                     }
                 }
 

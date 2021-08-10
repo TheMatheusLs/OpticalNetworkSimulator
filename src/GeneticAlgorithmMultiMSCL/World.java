@@ -78,6 +78,10 @@ public class World{
 
                 this.simulation.getRouting().updateConflictRoutesForMSCL(individual);
 
+                int seedSimulation = this.simulation.seedsForLoad[0];
+
+                this.simulation.randomGeneration = new Random(seedSimulation);
+
                 double[] result = this.simulation.simulateSingle(ConfigMSCL.networkLoadGATraining);
 
                 individual.numberOfSimulations++;
@@ -108,7 +112,7 @@ public class World{
         for (int g = 0; g < (this.populationOfIndividuals.size() / 2); g++){
             
             // Encontra os pais
-            IndividualMSCL parent_1 = getParent(this.populationOfIndividuals);
+            IndividualMSCL parent_1 = getParent(Utility.findAllRanksByDistance(this.populationOfIndividuals).get(0));
             IndividualMSCL parent_2 = getParent(this.populationOfIndividuals);
 
             // Encontra dois indivíduos diferentes para serem os pais

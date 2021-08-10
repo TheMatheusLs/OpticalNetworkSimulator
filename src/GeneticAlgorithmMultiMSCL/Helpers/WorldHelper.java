@@ -16,6 +16,11 @@ public class WorldHelper {
 
         List<IndividualMSCL> population = new ArrayList<IndividualMSCL>();
 
+        //Cria o indivíduo completo com false
+        population.add(GenerateIndividualInteger(ConfigMSCL.numberOfNodes, false, allRoutes));
+        //Cria o indivíduo completo com true
+        population.add(GenerateIndividualInteger(ConfigMSCL.numberOfNodes, true, allRoutes));
+
         while (population.size() < ConfigMSCL.populationCounts)
         {
             IndividualMSCL individual = GenerateIndividualInteger(ConfigMSCL.numberOfNodes, randomGA, allRoutes);
@@ -79,6 +84,8 @@ public class WorldHelper {
 
     private static IndividualMSCL GenerateIndividualInteger(int numberOfNodes, Random randomGA, List<List<Route>> allRoutes) {
 
+        double randomNumberIndividual = randomGA.nextDouble();
+
         List<GeneMSCL> sequenceOfGenes = new ArrayList<GeneMSCL>();
         for (int s = 0; s < numberOfNodes; s++){
             for (int d = 0; d < numberOfNodes; d++){
@@ -94,7 +101,7 @@ public class WorldHelper {
                 List<Boolean> bitsGenes = new ArrayList<Boolean>(numberOfConflictRoutes);
 
                 for (int bitGeneIndex = 0; bitGeneIndex < numberOfConflictRoutes; bitGeneIndex++){
-                    if (randomGA.nextDouble() > 0.5){
+                    if (randomGA.nextDouble() > (0.1 + randomNumberIndividual * 0.9)){ //Indivíduos gerados entre 0.1 a 0.9
                         bitsGenes.add(true);
                     } else {
                         bitsGenes.add(false);

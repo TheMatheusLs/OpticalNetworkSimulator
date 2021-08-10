@@ -28,11 +28,11 @@ public class Simulation {
     Topology topology;
     Routing routing;
 
-    Random randomGeneration;
+    public Random randomGeneration;
 
     CreateFolder folderToSave;
 
-    int[] seedsForLoad = new int[ParametersSimulation.getNumberOfSimulationsPerLoadNetwork()];
+    public int[] seedsForLoad = new int[ParametersSimulation.getNumberOfSimulationsPerLoadNetwork()];
 
     public void initialize(CreateFolder folderToSave) throws Exception{
 

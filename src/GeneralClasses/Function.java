@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.xml.parsers.DocumentBuilder;
+
 import src.ParametersSimulation;
 import src.Parameters.SimulationParameters;
 import src.Routing.Route;
@@ -15,6 +17,15 @@ import src.Structure.OpticalSwitch;
 import src.Types.ModulationLevelType;
 
 public class Function {
+
+	public static boolean compareDouble(double d1, double d2){
+
+		final double threshold = 1e-10; // doubles are equal if their difference is less than this value - you choose this value based on your needs
+
+		double difference = Math.abs(d1 - d2);
+
+		return difference < threshold;
+	}
 
 	/**
 	 * @param sequence_A

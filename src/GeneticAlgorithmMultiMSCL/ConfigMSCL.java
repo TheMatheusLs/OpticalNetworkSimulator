@@ -5,7 +5,7 @@ public class ConfigMSCL {
 
     public static final int numberOfNodes = 14;
 
-    public static final double bestIndividuals = 0.8;
+    public static final double bestIndividuals = 1.0;
     public static final double crossoverChance = 0.5;
     public static final double mutationChance = 0.01;
     public static final int numberOfCompetitors = 2;

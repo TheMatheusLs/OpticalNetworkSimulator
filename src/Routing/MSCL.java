@@ -5,6 +5,7 @@ import java.util.List;
 
 import src.ParametersSimulation;
 import src.GeneralClasses.Function;
+import src.ParametersSimulation.MSCLMetric;
 import src.ParametersSimulation.PhysicalLayerOption;
 
 class Apeture {
@@ -217,19 +218,10 @@ public class MSCL {
                 }
 
                 List<Route> iRoutesFilter;
-
-                if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Hops)){
+                if (!ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Disable)){
                     iRoutesFilter = iRoutesOrderBy(iRoutes, ParametersSimulation.getInterRoutesMSCLFactor());
                 } else {
-                    if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Betweenness)){
-                        iRoutesFilter= iRoutesOrderByBetweenness(iRoutes, ParametersSimulation.getInterRoutesMSCLFactor());
-                    } else {
-                        if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Disable)){
-                            iRoutesFilter = iRoutes;
-                        } else {
-                            throw new Exception("Parâmetro inválido | MSCLMetric");
-                        }
-                    }
+                    iRoutesFilter = iRoutes;   
                 }
 
                 for (Route iRoute: iRoutesFilter){
@@ -313,7 +305,7 @@ public class MSCL {
         return bestLostCapacity;
     }
 
-    List<Route> iRoutesOrderBy(List<Route> conflictRoute, double factor) {
+    List<Route> iRoutesOrderByHops(List<Route> conflictRoute, double factor) {
         List<Route> conflictRouteAux = new ArrayList<Route>();
         List<Route> newIRoutesList = new ArrayList<Route>();
 
@@ -353,6 +345,110 @@ public class MSCL {
 
 
         return newIRoutesList;
+    }
+
+    List<Route> iRoutesOrderBy(List<Route> conflictRoute, double factor) throws Exception {
+        List<Route> conflictRouteAux = new ArrayList<Route>();
+        List<Route> newIRoutesList = new ArrayList<Route>();
+
+        if (ParametersSimulation.getMetricMSCLMinToMax()){ // Ordena do menor para o maior
+            double minCost = Double.MAX_VALUE;
+
+            // Encontra o menor custo
+            for (Route iRoute : conflictRoute){
+                conflictRouteAux.add(iRoute);
+
+                if (minCost > returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
+                    minCost = returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric());
+                }
+            }
+
+            LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < (conflictRoute.size() * factor))){
+                for (Route iRoute : conflictRouteAux){
+                    if (Function.compareDouble(minCost, returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric()))){
+                        newIRoutesList.add(iRoute);
+                    }
+    
+                    if (newIRoutesList.size() >= (conflictRoute.size() * factor)){
+                        break LOOP;
+                    }
+                }
+    
+                for (Route route : newIRoutesList){
+                    conflictRouteAux.remove(route);
+                }
+    
+                minCost = Double.MAX_VALUE;
+
+                // Encontra o menor custo
+                for (Route iRoute : conflictRouteAux){
+                    if (minCost > returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
+                        minCost = returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric());
+                    }
+                }
+            }
+    
+            return newIRoutesList;
+        } else { // Ordena do maior para o menor
+
+            double maxCost = Double.MIN_VALUE;
+
+            // Encontra o menor custo
+            for (Route iRoute : conflictRoute){
+                conflictRouteAux.add(iRoute);
+
+                if (maxCost < returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
+                    maxCost = returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric());
+                }
+            }
+
+            LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < (conflictRoute.size() * factor))){
+                for (Route iRoute : conflictRouteAux){
+                    if (Function.compareDouble(maxCost, returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric()))){
+                        newIRoutesList.add(iRoute);
+                    }
+    
+                    if (newIRoutesList.size() >= (conflictRoute.size() * factor)){
+                        break LOOP;
+                    }
+                }
+    
+                for (Route route : newIRoutesList){
+                    conflictRouteAux.remove(route);
+                }
+    
+                maxCost = Double.MIN_NORMAL;
+
+                // Encontra o menor custo
+                for (Route iRoute : conflictRouteAux){
+                    if (maxCost < returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
+                        maxCost = returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric());
+                    }
+                }
+            }
+    
+            return newIRoutesList;
+        }
+    }
+
+    double returnMetricValue(Route route, MSCLMetric metric) throws Exception{
+        if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Hops)){
+            return (double) route.getNumHops();
+        } else {
+            if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Betweenness)){
+                return (double) route.getBetweennessCost();
+            } else {
+                if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Ocupation)){
+                    return (double) route.getSlotOcupationValue();
+                } else {
+                    if (ParametersSimulation.getMSCLMetric().equals(ParametersSimulation.MSCLMetric.Disable)){
+                        return (double) 0;
+                    } else {
+                        throw new Exception("Parâmetro inválido | MSCLMetric");
+                    }
+                }
+            }
+        }
     }
 
     private List<Route> iRoutesOrderByBetweenness(List<Route> conflictRoute, double factor) {

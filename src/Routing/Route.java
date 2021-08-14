@@ -73,6 +73,8 @@ public class Route {
      */
 	private List<Integer> slotsByBitrate;
 
+    private int slotOcupationValue;
+
     public Route() {		
 		this.upLink = new ArrayList<OpticalLink>();
 		this.downLink = new ArrayList<OpticalLink>();
@@ -86,6 +88,7 @@ public class Route {
         this.cost = 0.0;
 
         this.betweennessCost = 0;
+        this.slotOcupationValue = 0;
 
         this.conflictRoutes = new ArrayList<Route>();
         this.conflictRoutesDominants = new ArrayList<Route>();
@@ -387,12 +390,22 @@ public class Route {
 	}
 
 	void incrementSlots(int slot){
+        if (this.slotOcupation[slot] == 0){
+            this.slotOcupationValue++;
+        }
 		this.slotOcupation[slot]++;
 	}
 
 	void decreasesSlots(int slot){
-		this.slotOcupation[slot]--;
+        this.slotOcupation[slot]--;
+        if (this.slotOcupation[slot] == 0){
+            this.slotOcupationValue--;
+        }
 	}
+
+    public int getSlotOcupationValue(){
+        return this.slotOcupationValue;
+    }
 
     public void setModulationsTypeByBitrate(List<ModulationLevelType> modulationsTypeByBitrateAux){
 		this.modulationsTypeByBitrate = modulationsTypeByBitrateAux;

@@ -86,7 +86,7 @@ public class MultiObjectiveHelper {
             }
 
             // Verifica se os indivíduos estão na mesma posição em X e Y 
-            if ((individualA.NormalizedPBFitness == individualB.NormalizedPBFitness) && (individualA.NormalizedTimeFitness == individualB.NormalizedTimeFitness) ){
+            if ((individualA.PBFitness == individualB.PBFitness) && (individualA.timeFitness == individualB.timeFitness) ){
                 continue;
                 // Não há dominância. As duplicatas são retiradas em outro trecho do código
             }
@@ -111,10 +111,10 @@ public class MultiObjectiveHelper {
         int individualsInFront = auxSingleRank.size();
         for (int index = 0; index < individualsInFront; index++){
             int bestIndividualIndex = 0;
-            double MaxNormalizedDistanceFitness = -1;
+            double MaxFitness = -1;
             for (int nSolution = 0; nSolution < auxSingleRank.size(); nSolution++){
-                if(auxSingleRank.get(nSolution).NormalizedPBFitness > MaxNormalizedDistanceFitness){
-                    MaxNormalizedDistanceFitness = auxSingleRank.get(nSolution).NormalizedPBFitness;
+                if(auxSingleRank.get(nSolution).PBFitness > MaxFitness){
+                    MaxFitness = auxSingleRank.get(nSolution).PBFitness;
                     bestIndividualIndex = nSolution;
                 }
             }

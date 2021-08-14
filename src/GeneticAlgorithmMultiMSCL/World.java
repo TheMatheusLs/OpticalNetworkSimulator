@@ -50,6 +50,8 @@ public class World{
         MultiObjectiveHelper.UpdatePopulationFitness(this.populationOfIndividuals);
         
         this.saveFitnessGeneration();
+
+        this.saveAllIndividuals();
     }
 
     private void saveFitnessGeneration() throws Exception {
@@ -112,7 +114,7 @@ public class World{
         for (int g = 0; g < (this.populationOfIndividuals.size() / 2); g++){
             
             // Encontra os pais
-            IndividualMSCL parent_1 = getParent(Utility.findAllRanksByDistance(this.populationOfIndividuals).get(0));
+            IndividualMSCL parent_1 = getParent(this.populationOfIndividuals);
             IndividualMSCL parent_2 = getParent(this.populationOfIndividuals);
 
             // Encontra dois indivíduos diferentes para serem os pais

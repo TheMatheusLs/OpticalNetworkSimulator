@@ -35,7 +35,7 @@ public class World{
         populationOfIndividuals = new ArrayList<IndividualMSCL>();
         fitnessOverTimer = new ArrayList<Double>();
 
-        this.randomGenarationGA = new Random();
+        this.randomGenarationGA = new Random(42);
 
 		this.simulation.initialize(createFolder);
     }

@@ -198,6 +198,7 @@ public class Simulation {
 		int numBlockByQoT = 0; 
 		double time = 0.0;
         long limitCallRequest = 0;
+        long MSCLCycles = 0;
 
         final CallRequestList listOfCalls = new CallRequestList();
         final double meanRateCallDur = SimulationParameters.getMeanRateOfCallsDuration();
@@ -252,6 +253,7 @@ public class Simulation {
 
                             if(!slots.isEmpty()){
                                 route = mscl.getRoute();
+                                MSCLCycles += mscl.getCycles();
                             }
                         }
                     } else {
@@ -264,6 +266,7 @@ public class Simulation {
     
                                 if(!slots.isEmpty()){
                                     route = mscl.getRoute();
+                                    MSCLCycles += mscl.getCycles();
                                 }
                             }
                         }
@@ -330,9 +333,24 @@ public class Simulation {
 
 		if (limitCallRequest != 0){
             double PB = (double)(numBlockBySlots + numBlockByQoT) / limitCallRequest;
-			System.err.println("Erros Slots: " + numBlockBySlots + " Erros QoT: " + numBlockByQoT + " numReq: " + limitCallRequest + " PB: " + PB + " Time: " + (double)(geralFinalTime - geralInitTime) /1000);
-			return new double[] {PB, (double)(geralFinalTime - geralInitTime) /1000} ;
+            double timeTotal = (double)(geralFinalTime - geralInitTime) / 1000;
+            String outputString;
+
+            if (ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.MSCL)){
+                outputString = String.format("Blocks Slots: %d, Blocks QoT: %d, NumReq: %d, PB: %f, Time: %f, MSCLCycles: %d", numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal, MSCLCycles);
+                
+                System.out.println(outputString);
+
+                return new double[] {PB, MSCLCycles};
+            } else {
+                outputString = String.format("Blocks Slots: %d, Blocks QoT: %d, NumReq: %d, PB: %f, Time: %f", numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal);
+
+                System.out.println(outputString);
+                
+                return new double[] {PB, timeTotal};
+            }
 		}
+
 		return new double[]{-1,-1};
     }
 

@@ -32,12 +32,14 @@ public class MSCL {
     List<Route> routesOD;
     int bitRate;
     int bestIndexMSCL;
+    private long cycles;
 
     public MSCL(List<Route> routesOD, int bitRate){
         this.routesOD = routesOD;
         this.slotsMSCL = new ArrayList<List<Integer>>();
         this.bitRate = bitRate;
         this.bestIndexMSCL = 0;
+        this.cycles = 0;
     }
 
     public boolean Sequencial() throws Exception{
@@ -45,6 +47,9 @@ public class MSCL {
         double valuesLostCapacity;
 
         for (Route route : this.routesOD){
+
+            //this.cycles++;
+
             valuesLostCapacity = getRouteMSCLCost(route, this.bitRate);
 
             if (valuesLostCapacity < (Double.MAX_VALUE / 3)){
@@ -62,12 +67,18 @@ public class MSCL {
         List<Double> valuesLostCapacity = new ArrayList<Double>();
 
         for (Route route : this.routesOD){
+
+            //this.cycles++;
+
             valuesLostCapacity.add(getRouteMSCLCost(route, this.bitRate));
         }
 
         double minValue = Double.MAX_VALUE;
 
         for (int index = 0; index < this.routesOD.size(); index++){
+
+            //this.cycles++;
+
             if (minValue > valuesLostCapacity.get(index)){
                 minValue = valuesLostCapacity.get(index);
                 this.bestIndexMSCL = index;
@@ -107,6 +118,9 @@ public class MSCL {
         boolean isPossibleToAlocateReq = false;
         // Verifica se é possível alocar essa requisção dentro da rota principal (route)
         for (Apeture aperture : allApertures){
+
+            //this.cycles++;
+
             if (aperture.getSize() >= sizeSlotReq){
                 isPossibleToAlocateReq = true;
                 break;
@@ -126,7 +140,12 @@ public class MSCL {
         int bestSlotToCapacity = -1;
         // Percorre os slots possíveis.
         for (Apeture aperture: allApertures){
+
+            //this.cycles++;
+
             POINT_SLOT:for (int indexSlot = aperture.getPosition(); indexSlot < aperture.getPosition() + aperture.getSize(); indexSlot++){
+
+                //this.cycles++;
 
                 int startSlot = indexSlot;
                 int finalSlot = indexSlot + sizeSlotReq - 1;
@@ -137,6 +156,9 @@ public class MSCL {
 
                 // Verifica se é possível alocar nessa posição
                 POINT_TEST:for (int s = startSlot; s <= finalSlot;s++){
+
+                    //this.cycles++;
+
                     if (route.getSlotValue(s) > 0){
                         continue POINT_SLOT;
                     }
@@ -149,6 +171,9 @@ public class MSCL {
                 // Cria a lista dos slots para a requisição
                 List<Integer> slotsReqFake = new ArrayList<Integer>();
                 for (int s = startSlot; s <= finalSlot; s++){
+
+                    //this.cycles++;
+
                     slotsReqFake.add(s);
                 }
             
@@ -166,6 +191,9 @@ public class MSCL {
                 }
 
                 for (int possibleReqSize: possibleSlotsByRoute){
+
+                    //this.cycles++;
+
                     if (possibleReqSize > aperture.getSize()){
                         break;
                     }
@@ -181,7 +209,13 @@ public class MSCL {
 
                 double capacityAfterRoute = 0.0;
                 for (Apeture apetureInApeture : apertureMainroute) {
+
+                    //this.cycles++;
+
                     for (int possibleReqSize: possibleSlotsByRoute){
+
+                        //this.cycles++;
+
                         if (possibleReqSize > apetureInApeture.getSize()){
                             break;
                         }
@@ -226,6 +260,8 @@ public class MSCL {
 
                 for (Route iRoute: iRoutesFilter){
 
+                    this.cycles++;
+
                     // Busca o mínimo a esquerda
                     int minSlot = findSlotLeft(iRoute, startSlot);
                     
@@ -249,7 +285,13 @@ public class MSCL {
                     // *** Rota interferente
                     // Cálculo da capacidade antes da alocação na rota inteferente
                     for (Apeture apetureIRoute : apetureAfectInIRoute) {
+
+                        //this.cycles++;
+
                         for (int possibleReqSize: possibleSlotsByRoute){
+
+                            //this.cycles++;
+
                             if (possibleReqSize > apetureIRoute.getSize()){
                                 break;
                             }
@@ -266,7 +308,13 @@ public class MSCL {
 
                     capacityAfterRoute = 0.0;
                     for (Apeture apetureInApeture : apertureMainroute) {
+
+                        //this.cycles++;
+
                         for (int possibleReqSize: possibleSlotsByRoute){
+
+                            //this.cycles++;
+
                             if (possibleReqSize > apetureInApeture.getSize()){
                                 break;
                             }
@@ -294,8 +342,12 @@ public class MSCL {
                 }
             }
         }
+
         List<Integer> slotsReq = new ArrayList<Integer>();
         for (int s = bestSlotToCapacity; s <= bestSlotToCapacity + sizeSlotReq - 1; s++){
+
+            //this.cycles++;
+
             slotsReq.add(s);
         }
 
@@ -313,6 +365,9 @@ public class MSCL {
 
         // Encontra o maior custo
         for (Route iRoute : conflictRoute){
+
+            //this.cycles++;
+
             conflictRouteAux.add(iRoute);
 
             if (maxCost > iRoute.getCost()){
@@ -321,7 +376,13 @@ public class MSCL {
         }
 
         LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < (conflictRoute.size() * factor))){
+
+            //this.cycles++;
+
             for (Route iRoute : conflictRouteAux){
+
+                //this.cycles++;
+
                 if (maxCost == iRoute.getCost()){
                     newIRoutesList.add(iRoute);
                 }
@@ -332,11 +393,17 @@ public class MSCL {
             }
 
             for (Route route : newIRoutesList){
+
+                //this.cycles++;
+
                 conflictRouteAux.remove(route);
             }
 
             maxCost = Double.MAX_VALUE;
             for (Route iRoute : conflictRouteAux){
+
+                //this.cycles++;
+
                 if (maxCost > iRoute.getCost()){
                     maxCost = iRoute.getCost();
                 }
@@ -356,6 +423,9 @@ public class MSCL {
 
             // Encontra o menor custo
             for (Route iRoute : conflictRoute){
+
+                //this.cycles++;
+
                 conflictRouteAux.add(iRoute);
 
                 if (minCost > returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
@@ -364,7 +434,13 @@ public class MSCL {
             }
 
             LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < (conflictRoute.size() * factor))){
+
+                //this.cycles++;
+
                 for (Route iRoute : conflictRouteAux){
+
+                    //this.cycles++;
+
                     if (Function.compareDouble(minCost, returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric()))){
                         newIRoutesList.add(iRoute);
                     }
@@ -375,6 +451,9 @@ public class MSCL {
                 }
     
                 for (Route route : newIRoutesList){
+
+                    //this.cycles++;
+
                     conflictRouteAux.remove(route);
                 }
     
@@ -382,6 +461,9 @@ public class MSCL {
 
                 // Encontra o menor custo
                 for (Route iRoute : conflictRouteAux){
+
+                    //this.cycles++;
+
                     if (minCost > returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
                         minCost = returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric());
                     }
@@ -395,6 +477,9 @@ public class MSCL {
 
             // Encontra o menor custo
             for (Route iRoute : conflictRoute){
+
+                //this.cycles++;
+
                 conflictRouteAux.add(iRoute);
 
                 if (maxCost < returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
@@ -403,7 +488,13 @@ public class MSCL {
             }
 
             LOOP: while ((conflictRouteAux.size() > 0) && (newIRoutesList.size() < (conflictRoute.size() * factor))){
+
+                //this.cycles++;
+
                 for (Route iRoute : conflictRouteAux){
+
+                    //this.cycles++;
+
                     if (Function.compareDouble(maxCost, returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric()))){
                         newIRoutesList.add(iRoute);
                     }
@@ -414,6 +505,9 @@ public class MSCL {
                 }
     
                 for (Route route : newIRoutesList){
+
+                    //this.cycles++;
+
                     conflictRouteAux.remove(route);
                 }
     
@@ -421,6 +515,9 @@ public class MSCL {
 
                 // Encontra o menor custo
                 for (Route iRoute : conflictRouteAux){
+
+                    //this.cycles++;
+
                     if (maxCost < returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric())){
                         maxCost = returnMetricValue(iRoute, ParametersSimulation.getMSCLMetric());
                     }
@@ -498,6 +595,9 @@ public class MSCL {
         List<Integer> possibleSlots = new ArrayList<Integer>();
 
         for (int bitRate : ParametersSimulation.getTrafficOption()){
+
+            //this.cycles++;
+
             possibleSlots.add(Function.getNumberSlots(ParametersSimulation.getMudulationLevelType()[0], bitRate));
         }
 
@@ -516,6 +616,8 @@ public class MSCL {
 
 		INDEX_SLOT:for(int indexSlot = emptySlots; indexSlot <= finalSlotToSearch; indexSlot++){
             
+            //this.cycles++;
+
             if (indexSlot == -1){
                 throw new Exception("Erro: emptySlots = -1");
             }
@@ -528,6 +630,8 @@ public class MSCL {
 
 			// Para cada slot necessário para alocar a requisição;
 			EMPTY_SLOTS:for (emptySlots = indexSlot; emptySlots <= finalSlotToSearch; emptySlots++){
+
+                //this.cycles++;
 
 				if (route.getSlotValue(emptySlots) > 0){
                     break EMPTY_SLOTS;
@@ -548,6 +652,9 @@ public class MSCL {
         // Busca o mínimo a esquerda
         int minSlot = initSlot; // Força um erro
         for (int min = initSlot; min >= 0;min--){
+
+            //this.cycles++;
+
             if (route.getSlotValue(min) == 0){
                 minSlot = min;
             } else {
@@ -566,6 +673,9 @@ public class MSCL {
         // Busca o máximo a direita
         int maxSlot = initSlot; // Força um erro
         for (int max = initSlot; max < ParametersSimulation.getNumberOfSlotsPerLink(); max++){
+
+            //this.cycles++;
+
             if (route.getSlotValue(max) == 0){
                 maxSlot = max;
             } else {
@@ -578,5 +688,9 @@ public class MSCL {
         }
 
         return maxSlot;
+    }
+
+    public long getCycles() {
+        return this.cycles;
     }
 }

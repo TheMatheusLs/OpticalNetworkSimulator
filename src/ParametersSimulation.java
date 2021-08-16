@@ -12,7 +12,7 @@ import src.Types.ModulationLevelType;
 public class ParametersSimulation{
 
     final static double minLoadNetwork = 280;
-    final static double maxLoadNetwork = 300;
+    final static double maxLoadNetwork = 280;
     final static int numberOfPointsLoadNetwork = 3;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
@@ -20,7 +20,7 @@ public class ParametersSimulation{
     final static long maxNumberOfRequisitions = (long) 8e4;
     final static int maxNumberOfBlockedRequests = 500;
 
-    final static int kShortestRoutes = 3;
+    final static int kShortestRoutes = 1;
     
     final static int numberOfPolarizations = 2;
     final static int guardBandSize = 0;
@@ -35,16 +35,16 @@ public class ParametersSimulation{
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
-    final static GAOption GAOptionType = GAOption.GADisabled;
+    final static GAOption GAOptionType = GAOption.GAMSCL;
     final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
     
     final static DebugOptions debugOptions = DebugOptions.Disable;
     
-    final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.Dominant;
-    final static double interRoutesMSCLFactor = 0.5;
-    final static MSCLMetric metricMSCL = MSCLMetric.Hops;
+    final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes;
+    final static double interRoutesMSCLFactor = 1.0;
+    final static MSCLMetric metricMSCL = MSCLMetric.Disable;
     final static boolean metricMSCLMinToMax = false;
 
 	final static ModulationLevelType[] mudulationLevelType = {

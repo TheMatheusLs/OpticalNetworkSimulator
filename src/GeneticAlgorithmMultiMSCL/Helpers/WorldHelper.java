@@ -82,7 +82,7 @@ public class WorldHelper {
         return new IndividualMSCL(sequenceOfGenes);
     }
 
-    private static IndividualMSCL GenerateIndividualInteger(int numberOfNodes, Random randomGA, List<List<Route>> allRoutes) {
+    public static IndividualMSCL GenerateIndividualInteger(int numberOfNodes, Random randomGA, List<List<Route>> allRoutes) {
 
         double randomNumberIndividual = randomGA.nextDouble();
 

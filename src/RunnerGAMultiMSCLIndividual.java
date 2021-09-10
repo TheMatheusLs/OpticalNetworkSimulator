@@ -1,5 +1,7 @@
 package src;
 
+import java.util.Random;
+
 import src.GeneticAlgorithmMultiMSCL.ConfigMSCL;
 import src.GeneticAlgorithmMultiMSCL.IndividualMSCL;
 import src.GeneticAlgorithmMultiMSCL.Helpers.WorldHelper;
@@ -17,7 +19,7 @@ public class RunnerGAMultiMSCLIndividual {
         Simulation simulation = new Simulation();
         simulation.initialize(folderToSave);
 
-        IndividualMSCL individual = WorldHelper.GenerateIndividualInteger(ConfigMSCL.numberOfNodes, true, simulation.getRouting().getAllRoutes());
+        IndividualMSCL individual = WorldHelper.GenerateIndividualInteger(ConfigMSCL.numberOfNodes, new Random(20), simulation.getRouting().getAllRoutes());
 
         // String folder = "27-07-21_09-00-54_NSFNet_YEN_RunnerGATraining_OK_H-H-RSA_260E";
 		// String filename = "Solution_270_1.csv";

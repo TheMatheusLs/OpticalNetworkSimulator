@@ -29,6 +29,7 @@ public class Simulation {
     Routing routing;
 
     public Random randomGeneration;
+    public long currentRandomSeed;
 
     CreateFolder folderToSave;
 
@@ -40,12 +41,14 @@ public class Simulation {
 		this.folderToSave = folderToSave;
         
         this.folderToSave.writeInResults("networkLoad,meanPb,pbDesviation,pbErro,pbMargem,meanSimulationTime");
+        this.folderToSave.writeFile("AllReqsEnd.csv", "networkLoad,numBlockBySlots,numBlockByQoT,limitCallRequest,PB,timeTotal,MSCLCycles,currentRandomSeed,numSlots");
 
         this.topology = new Topology();
         this.folderToSave.writeFile("Topology.txt", String.valueOf(this.topology));
         
         this.routing = new Routing(this.topology);
         this.folderToSave.writeFile("Routes.txt", String.valueOf(this.routing));
+        this.folderToSave.writeFile("Routes.csv", String.valueOf(this.routing.getRoutesCSV()));
 
         if (ParametersSimulation.getRandomGeneration().equals(ParametersSimulation.RandomGeneration.PseudoRandomGeneration)){
             Random randomAux = new Random(ParametersSimulation.getMainSeed());
@@ -100,6 +103,7 @@ public class Simulation {
             for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                 
                 int seedSimulation = seedsForLoad[nSim-1];
+                this.currentRandomSeed = seedSimulation;
 
                 this.randomGeneration = new Random(seedSimulation);
 
@@ -135,6 +139,7 @@ public class Simulation {
             for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                 
                 int seedSimulation = seedsForLoad[nSim-1];
+                this.currentRandomSeed = seedSimulation;
 
                 this.randomGeneration = new Random(seedSimulation);
 
@@ -170,6 +175,7 @@ public class Simulation {
             for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                 
                 int seedSimulation = seedsForLoad[nSim-1];
+                this.currentRandomSeed = seedSimulation;
 
                 this.randomGeneration = new Random(seedSimulation);
 
@@ -335,6 +341,11 @@ public class Simulation {
             double PB = (double)(numBlockBySlots + numBlockByQoT) / limitCallRequest;
             double timeTotal = (double)(geralFinalTime - geralInitTime) / 1000;
             String outputString;
+
+            
+            String outputFileString = String.format("%f,%d,%d,%d,%f,%f,%d,%d,%d", networkLoad, numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal, MSCLCycles, this.currentRandomSeed, ParametersSimulation.getNumberOfSlotsPerLink());
+
+            this.folderToSave.writeFile("AllReqsEnd.csv", outputFileString);
 
             if (ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.MSCL)){
                 outputString = String.format("Blocks Slots: %d, Blocks QoT: %d, NumReq: %d, PB: %f, Time: %f, MSCLCycles: %d", numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal, MSCLCycles);

@@ -242,7 +242,7 @@ public class MSCL {
                                 iRoutes = route.getConflictRoutesNonDominants();
                             } else {
                                 if (ParametersSimulation.getInterRoutesMSCL().equals(ParametersSimulation.InterRoutesMSCL.None)){
-                                    iRoutes = null;
+                                    iRoutes = new ArrayList<>();
                                 } else {
                                     throw new Exception("Uma métrica diferente de disable teve ser selecionada.");
                                 }

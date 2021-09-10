@@ -156,16 +156,33 @@ public class Route {
         txt += String.format("%d\n", this.path.get(this.path.size() - 1));
 
         return txt;
-        // String txt = String.format("%d,%d,%f,%d,%d,%d,%d,", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size());
-        
-        // for (int p = 0; p < this.path.size() - 1; p++){
-        //     txt += String.format("%d-", this.path.get(p));
-        // }
-        // txt += String.format("%d\n", this.path.get(this.path.size() - 1));
-
-        // return txt;
     }
 
+    public String getRouteCSV(){
+
+        String txt = String.format("%d,%d,%f,%d,%d,%d,%d,%d,", this.origin, this.destination, this.cost, this.K, this.conflictRoutes.size(), this.conflictRoutesDominants.size(), this.conflictRoutesNonDominants.size(), this.getNumHops());
+
+        // Path
+        for (int p = 0; p < this.path.size() - 1; p++){
+            txt += String.format("%d-", this.path.get(p));
+        }
+        txt += String.format("%d,", this.path.get(this.path.size() - 1));
+        
+        // Slot by Bitrate
+        for (int p = 0; p < this.getSizeSlotTypeByBitrate().size() - 1; p++){
+            txt += String.format("%d-", this.getSizeSlotTypeByBitrate().get(p));
+        }
+        txt += String.format("%d,", this.getSizeSlotTypeByBitrate().get(this.getSizeSlotTypeByBitrate().size() - 1));
+
+        // Modulation
+        for (int p = 0; p < this.modulationsTypeByBitrate.size() - 1; p++){
+            txt += String.format("%d-", this.modulationsTypeByBitrate.get(p).getConstelation());
+        }
+        txt += String.format("%d\n", this.modulationsTypeByBitrate.get(this.modulationsTypeByBitrate.size() - 1).getConstelation());
+
+        return txt;
+    }
+    
     boolean isEquals(Route right) {
     
         if(right.path == this.path)

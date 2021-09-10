@@ -62,7 +62,10 @@ public class Routing {
 
         if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
             this.findAllSizeSlotsAndModulationByRoute();
+        } else {
+            this.findAllSizeSlotsByRoute();
         }
+
         System.out.println(this);
     }
 
@@ -197,17 +200,53 @@ public class Routing {
                     dominatsRoutes.add(currentRoute);
                 }
 
-                // System.out.println("Conflitantes");
-                // for (Route domR : mainRoute.getConflictRoute()){
-                //     System.out.print(domR);
-                // }
-
-                // System.out.println("Não dominadas");
-                // for (Route domR : dominatsRoutes){
-                //     System.out.print(domR);
-                // }
-
                 mainRoute.setConflitListDominants(dominatsRoutes);
+            }
+        }
+    }
+
+    public String getRoutesCSV() {
+
+        String txt = "Origin,Destination,Cost,K,ConflictRoutes,ConflictRoutesDominants,ConflictRoutesNonDominants,numHops,Path,SlotsByBitrate,ConstalationByBirate\n"; 
+        
+        for (List<Route> routes : allRoutes){
+            for (Route route : routes){
+                if (route != null){
+                    txt += route.getRouteCSV();
+                }
+            }
+        }
+
+        return txt;
+    }
+
+    private void findAllSizeSlotsByRoute() throws Exception {
+        for (List<Route> routesOD : this.allRoutes){
+            for (Route mainRoute : routesOD){
+
+                // Verifica se a rota existe
+                if (mainRoute == null){
+                    continue;
+                }
+                List<ModulationLevelType> modulationLevelByBitrate = new ArrayList<ModulationLevelType>();
+                List<Integer> sizeSlotsByBitrate = new ArrayList<Integer>();
+
+                POINT_BITRATE:for (int bitRate: ParametersSimulation.getTrafficOption()){
+
+                    modulationLevelByBitrate.add(ParametersSimulation.getMudulationLevelType()[0]);
+
+                    // Encontra o tamanho do slot
+                    final int reqNumbOfSlots = Function.getNumberSlots(ParametersSimulation.getMudulationLevelType()[0], bitRate);
+
+                    sizeSlotsByBitrate.add(reqNumbOfSlots);
+                }
+
+                if (ParametersSimulation.getTrafficOption().length == modulationLevelByBitrate.size()){
+                    mainRoute.setModulationsTypeByBitrate(modulationLevelByBitrate);
+                    mainRoute.setSizeSlotTypeByBitrate(sizeSlotsByBitrate);
+                } else {
+                    throw new Exception("Erro ao alocar as modulações e slots da camada física!");
+                }
             }
         }
     }

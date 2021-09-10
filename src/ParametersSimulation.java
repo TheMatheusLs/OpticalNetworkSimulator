@@ -11,12 +11,12 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 280;
-    final static double maxLoadNetwork = 280;
-    final static int numberOfPointsLoadNetwork = 3;
+    final static double minLoadNetwork = 300;
+    final static double maxLoadNetwork = 300;
+    final static int numberOfPointsLoadNetwork = 100;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
-    final static int numberOfSlotsPerLink = 128;
+    final static int numberOfSlotsPerLink = 64;
     final static long maxNumberOfRequisitions = (long) 8e4;
     final static int maxNumberOfBlockedRequests = 500;
 
@@ -27,15 +27,15 @@ public class ParametersSimulation{
 
     final static int mainSeed = 42;
     
-    final static TopologyType topologyType = TopologyType.NSFNet;
+    final static TopologyType topologyType = TopologyType.Finland;
     final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado;
     final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
     final static LinkCostType linkCostType = LinkCostType.Hops;
     final static int[] trafficOption = new int[]{100, 200, 400};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
-    final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
+    final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Enabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
-    final static GAOption GAOptionType = GAOption.GAMSCL;
+    final static GAOption GAOptionType = GAOption.GADisabled;
     final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
@@ -43,12 +43,14 @@ public class ParametersSimulation{
     final static DebugOptions debugOptions = DebugOptions.Disable;
     
     final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes;
-    final static double interRoutesMSCLFactor = 1.0;
-    final static MSCLMetric metricMSCL = MSCLMetric.Disable;
+    final static double interRoutesMSCLFactor = 0.75;
+    final static MSCLMetric metricMSCL = MSCLMetric.Ocupation;
     final static boolean metricMSCLMinToMax = false;
 
 	final static ModulationLevelType[] mudulationLevelType = {
-		ModulationLevelType.EIGHT_QAM,
+		ModulationLevelType.SIXTEEN_QAM,
+        ModulationLevelType.EIGHT_QAM,
+		ModulationLevelType.FOUR_QAM,
     };
 
     final static String pathToSaveResults = "D:\\ProgrammingFiles\\ReportsOpticalNetworkSimulator\\";

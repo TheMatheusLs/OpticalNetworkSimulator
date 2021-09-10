@@ -13,6 +13,11 @@ public class Routing_SA {
     public static Route findRoute(List<Route> routesOD, int bitRate) throws Exception{
 
         for (Route route : routesOD){
+
+            if (route == null){
+                return null;
+            }
+            
             // Verifica se a rota tem capacidade de alocar a requisição
             int reqNumbOfSlots = Integer.MAX_VALUE;
             ModulationLevelType[] allModulations = ParametersSimulation.getMudulationLevelType();

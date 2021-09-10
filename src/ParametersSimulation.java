@@ -12,17 +12,17 @@ import src.Types.ModulationLevelType;
 public class ParametersSimulation{
 
     final static double minLoadNetwork = 300;
-    final static double maxLoadNetwork = 300;
-    final static int numberOfPointsLoadNetwork = 100;
+    final static double maxLoadNetwork = 400;
+    final static int numberOfPointsLoadNetwork = 2;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
-    final static int numberOfSlotsPerLink = 64;
-    final static long maxNumberOfRequisitions = (long) 8e4;
+    final static int numberOfSlotsPerLink = 128;
+    final static long maxNumberOfRequisitions = (long) 1e6;
     final static int maxNumberOfBlockedRequests = 500;
 
-    final static int kShortestRoutes = 1;
+    final static int kShortestRoutes = 3;
     
-    final static int numberOfPolarizations = 2;
+    final static int numberOfPolarizations = 1;
     final static int guardBandSize = 0;
 
     final static int mainSeed = 42;
@@ -31,7 +31,7 @@ public class ParametersSimulation{
     final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado;
     final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
     final static LinkCostType linkCostType = LinkCostType.Hops;
-    final static int[] trafficOption = new int[]{100, 200, 400};
+    final static int[] trafficOption = new int[]{50, 100, 175, 250, 325};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Enabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
@@ -43,11 +43,13 @@ public class ParametersSimulation{
     final static DebugOptions debugOptions = DebugOptions.Disable;
     
     final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes;
-    final static double interRoutesMSCLFactor = 0.75;
-    final static MSCLMetric metricMSCL = MSCLMetric.Ocupation;
+    final static double interRoutesMSCLFactor = 1.0;
+    final static MSCLMetric metricMSCL = MSCLMetric.Disable;
     final static boolean metricMSCLMinToMax = false;
 
 	final static ModulationLevelType[] mudulationLevelType = {
+		ModulationLevelType.SIXTYFOUR_QAM,
+		ModulationLevelType.THIRTYTWO_QAM,
 		ModulationLevelType.SIXTEEN_QAM,
         ModulationLevelType.EIGHT_QAM,
 		ModulationLevelType.FOUR_QAM,

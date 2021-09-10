@@ -12,6 +12,10 @@ public class SA_Routing {
         for (int firstIndexSlot = 0; firstIndexSlot < ParametersSimulation.getNumberOfSlotsPerLink();){
             LOOP_ROUTE:for (Route route : routesOD){
 
+                if (route == null){
+                    continue LOOP_ROUTE;
+                }
+
                 int reqNumbOfSlots = Integer.MAX_VALUE;
 
                 ModulationLevelType[] allModulations = ParametersSimulation.getMudulationLevelType();

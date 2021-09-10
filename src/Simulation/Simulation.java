@@ -40,7 +40,7 @@ public class Simulation {
         //Adiciona o cabeçalho dos resultados
 		this.folderToSave = folderToSave;
         
-        this.folderToSave.writeInResults("networkLoad,meanPb,pbDesviation,pbErro,pbMargem,meanSimulationTime");
+        this.folderToSave.writeInResults("NetworkLoad,NumSim,PB,SimulationTime,MSCLCycle,RandomSeed");
         this.folderToSave.writeFile("AllReqsEnd.csv", "networkLoad,numBlockBySlots,numBlockByQoT,limitCallRequest,PB,timeTotal,MSCLCycles,currentRandomSeed,numSlots");
 
         this.topology = new Topology();
@@ -97,9 +97,6 @@ public class Simulation {
 
             System.out.println(String.format("Simulando carga de %f", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration())));
 
-            List<Double> PBLoad = new ArrayList<Double>();
-            List<Double> TimeLoad = new ArrayList<Double>();
-
             for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                 
                 int seedSimulation = seedsForLoad[nSim-1];
@@ -111,12 +108,16 @@ public class Simulation {
 
                 double[] results = this.simulateSingle((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()));
 
-                PBLoad.add(results[0]);
-                TimeLoad.add(results[1]);
+                double PB = results[0];
+                double time = results[1];
+                double MSCLCycle = results[2];
+
+                String txt = String.format("%f,%d,%f,%f,%f,%d", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration()), nSim, PB, time, MSCLCycle, this.currentRandomSeed);
+
+                this.folderToSave.writeInResults(txt);
             }
+            
 
-
-            this.folderToSave.writeInResults((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()) + "," + Function.getMeanList(PBLoad) + "," + 0 + "," + 0 + "," + 0 + "," + Function.getMeanList(TimeLoad));
         }
     }
 
@@ -133,9 +134,6 @@ public class Simulation {
 
             System.out.println(String.format("Simulando carga de %f", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration())));
 
-            List<Double> PBLoad = new ArrayList<Double>();
-            List<Double> TimeLoad = new ArrayList<Double>();
-
             for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                 
                 int seedSimulation = seedsForLoad[nSim-1];
@@ -146,12 +144,15 @@ public class Simulation {
                 System.out.println(String.format("Simulação nº: %d com seed = %d", nSim, seedSimulation));
 
                 double[] results = this.doSimulateGA(individual, (networkLoad / SimulationParameters.getMeanRateOfCallsDuration()));
-                PBLoad.add(results[0]);
-                TimeLoad.add(results[1]);
+                
+                double PB = results[0];
+                double time = results[1];
+                double MSCLCycle = results[2];
+
+                String txt = String.format("%f,%d,%f,%f,%f,%d", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration()), nSim, PB, time, MSCLCycle, this.currentRandomSeed);
+
+                this.folderToSave.writeInResults(txt);
             }
-
-
-            this.folderToSave.writeInResults((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()) + "," + Function.getMeanList(PBLoad) + "," + 0 + "," + 0 + "," + 0 + "," + Function.getMeanList(TimeLoad));
         }
     }
 
@@ -169,9 +170,6 @@ public class Simulation {
 
             System.out.println(String.format("Simulando carga de %f", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration())));
 
-            List<Double> PBLoad = new ArrayList<Double>();
-            List<Double> TimeLoad = new ArrayList<Double>();
-
             for (int nSim = 1; nSim <= ParametersSimulation.getNumberOfSimulationsPerLoadNetwork(); nSim++){
                 
                 int seedSimulation = seedsForLoad[nSim-1];
@@ -184,12 +182,15 @@ public class Simulation {
                 this.getRouting().updateConflictRoutesForMSCL(individual);
 
                 double[] results = this.simulateSingle((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()));
-                PBLoad.add(results[0]);
-                TimeLoad.add(results[1]);
+                
+                double PB = results[0];
+                double time = results[1];
+                double MSCLCycle = results[2];
+
+                String txt = String.format("%f,%d,%f,%f,%f,%d", (networkLoad / SimulationParameters.getMeanRateOfCallsDuration()), nSim, PB, time, MSCLCycle, this.currentRandomSeed);
+
+                this.folderToSave.writeInResults(txt);
             }
-
-
-            this.folderToSave.writeInResults((networkLoad / SimulationParameters.getMeanRateOfCallsDuration()) + "," + Function.getMeanList(PBLoad) + "," + 0 + "," + 0 + "," + 0 + "," + Function.getMeanList(TimeLoad));
         }
     }
 
@@ -340,26 +341,16 @@ public class Simulation {
 		if (limitCallRequest != 0){
             double PB = (double)(numBlockBySlots + numBlockByQoT) / limitCallRequest;
             double timeTotal = (double)(geralFinalTime - geralInitTime) / 1000;
-            String outputString;
-
             
             String outputFileString = String.format("%f,%d,%d,%d,%f,%f,%d,%d,%d", networkLoad, numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal, MSCLCycles, this.currentRandomSeed, ParametersSimulation.getNumberOfSlotsPerLink());
 
             this.folderToSave.writeFile("AllReqsEnd.csv", outputFileString);
 
-            if (ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.MSCL)){
-                outputString = String.format("Blocks Slots: %d, Blocks QoT: %d, NumReq: %d, PB: %f, Time: %f, MSCLCycles: %d", numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal, MSCLCycles);
+            String outputString = String.format("Blocks Slots: %d, Blocks QoT: %d, NumReq: %d, PB: %f, Time: %f, MSCLCycles: %d", numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal, MSCLCycles);
                 
-                System.out.println(outputString);
+            System.out.println(outputString);
 
-                return new double[] {PB, MSCLCycles};
-            } else {
-                outputString = String.format("Blocks Slots: %d, Blocks QoT: %d, NumReq: %d, PB: %f, Time: %f", numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal);
-
-                System.out.println(outputString);
-                
-                return new double[] {PB, timeTotal};
-            }
+            return new double[] {PB, timeTotal, MSCLCycles};
 		}
 
 		return new double[]{-1,-1};
@@ -493,8 +484,14 @@ public class Simulation {
 
 		if (limitCallRequest != 0){
             double PB = (double)(numBlockBySlots + numBlockByQoT) / limitCallRequest;
-			System.err.println("Erros Slots: " + numBlockBySlots + " Erros QoT: " + numBlockByQoT + " numReq: " + limitCallRequest + " PB: " + PB);
-			return new double[] {PB, (double)(geralFinalTime - geralInitTime) /1000} ;
+            double timeTotal = (double)(geralFinalTime - geralInitTime) / 1000;
+            double MSCLCycles = 0;
+
+            String outputString = String.format("Blocks Slots: %d, Blocks QoT: %d, NumReq: %d, PB: %f, Time: %f, MSCLCycles: %d", numBlockBySlots, numBlockByQoT, limitCallRequest, PB, timeTotal, MSCLCycles);
+                
+            System.out.println(outputString);
+
+            return new double[] {PB, timeTotal, MSCLCycles};
 		}
 		return new double[]{-1,-1};
     }

@@ -90,13 +90,13 @@ public class World{
 
                 if (individual.numberOfSimulations == 1){
                     individual.PBFitness = result[0];
-                    individual.timeFitness = result[1]; 
+                    individual.timeFitness = result[2]; 
                 } else {
                     double meanPBFitness = individual.PBFitness;
                     double meanTimeFitness = individual.timeFitness;
 
                     double newMeanPBFitness = ((meanPBFitness * (individual.numberOfSimulations - 1)) + result[0]) / individual.numberOfSimulations;
-                    double newMeanTimeFitness = ((meanTimeFitness * (individual.numberOfSimulations - 1)) + result[1]) / individual.numberOfSimulations;
+                    double newMeanTimeFitness = ((meanTimeFitness * (individual.numberOfSimulations - 1)) + result[2]) / individual.numberOfSimulations;
 
                     individual.PBFitness = newMeanPBFitness;
                     individual.timeFitness = newMeanTimeFitness;

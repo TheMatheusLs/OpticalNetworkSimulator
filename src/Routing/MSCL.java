@@ -44,13 +44,15 @@ public class MSCL {
 
     public boolean Sequencial() throws Exception{
 
-        double valuesLostCapacity;
+        double valuesLostCapacity = Double.MAX_VALUE;
 
         for (Route route : this.routesOD){
 
             //this.cycles++;
 
-            valuesLostCapacity = getRouteMSCLCost(route, this.bitRate);
+            if (route != null){
+                valuesLostCapacity = getRouteMSCLCost(route, this.bitRate);
+            }
 
             if (valuesLostCapacity < (Double.MAX_VALUE / 3)){
                 return true;
@@ -70,7 +72,11 @@ public class MSCL {
 
             //this.cycles++;
 
-            valuesLostCapacity.add(getRouteMSCLCost(route, this.bitRate));
+            if (route != null){
+                valuesLostCapacity.add(getRouteMSCLCost(route, this.bitRate));
+            } else {
+                valuesLostCapacity.add(Double.MAX_VALUE);
+            }
         }
 
         double minValue = Double.MAX_VALUE;
@@ -106,6 +112,10 @@ public class MSCL {
 
         if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
             int bitRateIndex = Function.getBitRateIndex(bitRate);
+
+            if (route == null){
+                return 0;
+            }
 
             sizeSlotReq = route.getNumberOfSlotsByBitRate(bitRateIndex);
         } else {

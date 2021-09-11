@@ -75,7 +75,7 @@ public class MSCL {
             if (route != null){
                 valuesLostCapacity.add(getRouteMSCLCost(route, this.bitRate));
             } else {
-                valuesLostCapacity.add(Double.MAX_VALUE);
+                valuesLostCapacity.add(Double.MAX_VALUE / 2);
             }
         }
 
@@ -91,7 +91,7 @@ public class MSCL {
             }
         }
 
-        if (minValue != Double.MAX_VALUE){
+        if (minValue < (Double.MAX_VALUE / 2) - 500){
             return true;
         }
 

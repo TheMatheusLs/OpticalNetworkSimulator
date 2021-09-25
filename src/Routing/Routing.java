@@ -605,4 +605,31 @@ public class Routing {
             }
         }
     }
+
+    public List<Route> orderRoutesByOcupation(List<Route> routeSolution) {
+
+        List<Route> routeList = new ArrayList<Route>();
+        List<Route> routeListAux = new ArrayList<Route>();
+        
+        for (Route route : routeSolution) {
+            routeListAux.add(route);
+        }
+
+        while (routeListAux.size() > 0){
+            
+            int minValue = Integer.MAX_VALUE;
+            Route auxRoute = null;
+            for (Route route : routeListAux) {
+                if ( route.getSlotOcupationValue() < minValue){
+                    minValue = route.getSlotOcupationValue();
+                    auxRoute = route;
+                }
+            }
+
+            routeList.add(auxRoute);
+            routeListAux.remove(auxRoute);
+        }
+
+        return routeList;
+    }
 }

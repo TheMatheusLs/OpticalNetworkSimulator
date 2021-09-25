@@ -47,6 +47,8 @@ public class ParametersSimulation{
     final static double interRoutesMSCLFactor = 1.0;
     final static MSCLMetric metricMSCL = MSCLMetric.Disable;
     final static boolean metricMSCLMinToMax = false;
+    
+    final static boolean orderByOcupation = true;
 
 	final static ModulationLevelType[] mudulationLevelType = {
 		//ModulationLevelType.SIXTYFOUR_QAM,
@@ -176,6 +178,10 @@ public class ParametersSimulation{
 
     public static boolean getMetricMSCLMinToMax() {
         return metricMSCLMinToMax;
+    }
+
+    public static boolean getOrderByOcupation() {
+        return orderByOcupation;
     }
 
     public enum DebugOptions{
@@ -308,7 +314,10 @@ public class ParametersSimulation{
         txt += String.format("interRoutesMSCL = %s\n", interRoutesMSCL.name());
         
         txt += String.format("interRoutesMSCLFactor = %f\n", interRoutesMSCLFactor);
-        txt += String.format("interRoutesMSCLFactor = %s\n", metricMSCL.name());
+        txt += String.format("metricMSCL = %s\n", metricMSCL.name());
+        txt += String.format("metricMSCLMinToMax = %b\n", metricMSCLMinToMax);
+
+        txt += String.format("orderByOcupation = %b\n", orderByOcupation);
 
         txt += "mudulationLevelType = ";
         for (int m = 0; m < getMudulationLevelType().length - 1; m++){

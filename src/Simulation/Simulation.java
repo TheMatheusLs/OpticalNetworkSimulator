@@ -242,6 +242,11 @@ public class Simulation {
 
             // Captura as rotas para o par origem destino
 			List<Route> routeSolution = this.routing.getRoutesForOD(source, destination);
+
+            if (ParametersSimulation.getOrderByOcupation()){
+                routeSolution = this.routing.orderRoutesByOcupation(routeSolution);
+            }
+
             Route route = null;
             List<Integer> slots = new ArrayList<>();
 
@@ -404,6 +409,11 @@ public class Simulation {
 
             // Captura as rotas para o par origem destino
 			List<Route> routeSolution = this.routing.getRoutesForOD(source, destination);
+
+            if (ParametersSimulation.getOrderByOcupation()){
+                routeSolution = this.routing.orderRoutesByOcupation(routeSolution);
+            }
+
             Route route = null;
             List<Integer> slots = new ArrayList<>();
             

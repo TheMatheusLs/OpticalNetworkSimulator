@@ -322,6 +322,13 @@ public class Routing {
                             }
                             BREAK_LINK:for (OpticalLink link: mainRoutesAux.getUpLink()){
                                 if ((currentRouteID != mainRoutesAux.hashCode()) && (mainLink == link)){
+
+                                    for (Route pqp : conflictRoutes){
+                                        if (pqp == mainRoutesAux){
+                                            continue BREAK_LINK;
+                                        }
+                                    }
+
                                     conflictRoutes.add(mainRoutesAux);
                                     break BREAK_LINK;
                                 }

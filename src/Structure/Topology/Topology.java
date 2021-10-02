@@ -180,11 +180,15 @@ public class Topology {
                 if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.Simple)){
                     return SimpleDimention.getLength();
                 } else {
-                    throw new Exception("Topologia inválida!");
+                    if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.SimpleSquare)){
+                        return SimpleSquareDimention.getLength();
+                    } else {
+                        throw new Exception("Topologia inválida!");
+                    }
                 }
             }
         }
-    }
+    } 
 
     public OpticalLink getLink(int indexOrNode, int indexDeNode) {
         assert(indexOrNode < this.getNumNodes());

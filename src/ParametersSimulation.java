@@ -20,7 +20,7 @@ public class ParametersSimulation{
     final static long maxNumberOfRequisitions = (long) 1e6;
     final static int maxNumberOfBlockedRequests = 500;
 
-    final static int kShortestRoutes = 1;
+    final static int kShortestRoutes = 2;
     
     final static int numberOfPolarizations = 2;
     final static int guardBandSize = 0;
@@ -28,10 +28,9 @@ public class ParametersSimulation{
     final static int mainSeed = 42;
     
     final static TopologyType topologyType = TopologyType.NSFNet;
-    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado;
+    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLSequencial;
     final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
     final static LinkCostType linkCostType = LinkCostType.Hops;
-    //final static int[] trafficOption = new int[]{50, 100, 175, 250, 325};
     final static int[] trafficOption = new int[]{100, 200, 400};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
@@ -53,8 +52,8 @@ public class ParametersSimulation{
 	final static ModulationLevelType[] mudulationLevelType = {
 		//ModulationLevelType.SIXTYFOUR_QAM,
 		//ModulationLevelType.THIRTYTWO_QAM,
-		ModulationLevelType.EIGHT_QAM,
-        //ModulationLevelType.EIGHT_QAM,
+		//ModulationLevelType.SIXTEEN_QAM,
+        ModulationLevelType.EIGHT_QAM,
 		//ModulationLevelType.FOUR_QAM,
     };
 
@@ -209,7 +208,8 @@ public class ParametersSimulation{
         Ring,
         Toroidal,
         Finland,
-        Simple;
+        Simple,
+        SimpleSquare;
     }
 
     public enum RoutingAlgorithmType{

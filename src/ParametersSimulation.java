@@ -11,45 +11,45 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 260;
-    final static double maxLoadNetwork = 300;
-    final static int numberOfPointsLoadNetwork = 5;
-    final static int numberOfSimulationsPerLoadNetwork = 1;
+    final static double minLoadNetwork = 270; // Carga final
+    final static double maxLoadNetwork = 270; // Inicia na carga máxima
+    final static int numberOfPointsLoadNetwork = 1; // Número de pontos de carga entre o mínimo e máximo
+    final static int numberOfSimulationsPerLoadNetwork = 1; // Número de simulações com seeds diferentes a cada carga
 
-    final static int numberOfSlotsPerLink = 128;
-    final static long maxNumberOfRequisitions = (long) 1e6;
-    final static int maxNumberOfBlockedRequests = 500;
+    final static int numberOfSlotsPerLink = 128; // Número de slots de frequência
+    final static long maxNumberOfRequisitions = (long) 1e6; // Número máximo de requisições
+    final static int maxNumberOfBlockedRequests = 500; // Máximo de requisições bloqueadas
 
-    final static int kShortestRoutes = 2;
+    final static int kShortestRoutes = 2; // Número de rotas encontrada pelo algoritmo Yen
     
-    final static int numberOfPolarizations = 2;
-    final static int guardBandSize = 0;
+    final static int numberOfPolarizations = 2; // Número de polarização
+    final static int guardBandSize = 0; 
 
-    final static int mainSeed = 42;
+    final static int mainSeed = 42; // Semente aleátoria principal
     
-    final static TopologyType topologyType = TopologyType.NSFNet;
-    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLSequencial;
-    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
-    final static LinkCostType linkCostType = LinkCostType.Hops;
-    final static int[] trafficOption = new int[]{100, 200, 400};
-    final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
-    final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
-    final static RSAOrder RSAOrderType = RSAOrder.Disable;
-    final static GAOption GAOptionType = GAOption.GADisabled;
-    final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
-    final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
-    final static CallRequestType callRequestType = CallRequestType.Unidirectional;
+    final static TopologyType topologyType = TopologyType.Finland; // Topologia de rede
+    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado; // Algoritmo de roteamento
+    final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL; // Algoritmo de alocação de espectro
+    final static LinkCostType linkCostType = LinkCostType.Hops; // Função custo para o algoritmo de roteamento
+    final static int[] trafficOption = new int[]{100, 200, 400}; // Taxa de Gbits para o tráfego
+    final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA; // Alocação dos recursos (única opção disponível)
+    final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled; // Habilita a camada física
+    final static RSAOrder RSAOrderType = RSAOrder.Disable; // Ordem no algoritmo do alocação do espectro. Ao usar o MSCL deixa desabilitado
+    final static GAOption GAOptionType = GAOption.GADisabled; // Habilita para usar o GA
+    final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest; // Críterio de parada das simulações
+    final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration; // Gerações das sementes aleátorias
+    final static CallRequestType callRequestType = CallRequestType.Unidirectional; // Fluxo das chamadas
     
-    final static DebugOptions debugOptions = DebugOptions.Disable;
+    final static DebugOptions debugOptions = DebugOptions.Disable; // Debug
     
-    final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes;
-    final static double interRoutesMSCLFactor = 1.0;
-    final static MSCLMetric metricMSCL = MSCLMetric.Disable;
-    final static boolean metricMSCLMinToMax = false;
+    final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes; // Conjunto interferente para o MSCL
+    final static double interRoutesMSCLFactor = 1.0; // Tamanho do conjunto a ser utilizado
+    final static MSCLMetric metricMSCL = MSCLMetric.Disable; // Métrica de ordenação
+    final static boolean metricMSCLMinToMax = false; // Ordem da métrica Máx = false e Min = true
     
-    final static boolean orderByOcupation = true;
+    final static boolean orderByOcupation = false; // Ordenação das rotas pela ocupação
 
-	final static ModulationLevelType[] mudulationLevelType = {
+	final static ModulationLevelType[] mudulationLevelType = { //Formato de modulação, ordenado do maior ao menor
 		//ModulationLevelType.SIXTYFOUR_QAM,
 		//ModulationLevelType.THIRTYTWO_QAM,
 		//ModulationLevelType.SIXTEEN_QAM,
@@ -57,7 +57,7 @@ public class ParametersSimulation{
 		//ModulationLevelType.FOUR_QAM,
     };
 
-    final static String pathToSaveResults = "D:\\ProgrammingFiles\\ReportsOpticalNetworkSimulator\\";
+    final static String pathToSaveResults = "D:\\ProgrammingFiles\\ReportsOpticalNetworkSimulator\\"; // Pasta onde serão armazenadas os relatórios da simulação. Em caso da utilização no sistema linux é necessário aterar a classe CreateFolder.java 
 
     public static double getMinLoadNetwork() {
         return minLoadNetwork;

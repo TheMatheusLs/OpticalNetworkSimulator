@@ -11,7 +11,7 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 90;
+    final static double minLoadNetwork = 270;
     final static double maxLoadNetwork = 90;
     final static int numberOfPointsLoadNetwork = 1;
     final static int numberOfSimulationsPerLoadNetwork = 1;
@@ -22,10 +22,10 @@ public class ParametersSimulation{
 
     final static int kShortestRoutes = 1;
     
-    final static int numberOfPolarizations = 2;
-    final static int guardBandSize = 0;
+    final static int numberOfPolarizations = 2; // Número de polarização
+    final static int guardBandSize = 0; 
 
-    final static int mainSeed = 42;
+    final static int mainSeed = 42; // Semente aleátoria principal
     
     final static TopologyType topologyType = TopologyType.NSFNet;
     final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLSequencial;
@@ -39,17 +39,17 @@ public class ParametersSimulation{
     final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
+
+    final static DebugOptions debugOptions = DebugOptions.Disable; // Debug
     
-    final static DebugOptions debugOptions = DebugOptions.Disable;
-    
-    final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes;
-    final static double interRoutesMSCLFactor = 1.0;
-    final static MSCLMetric metricMSCL = MSCLMetric.Disable;
-    final static boolean metricMSCLMinToMax = false;
-    
+    final static InterRoutesMSCL interRoutesMSCL = InterRoutesMSCL.AllRoutes; // Conjunto interferente para o MSCL
+    final static double interRoutesMSCLFactor = 1.0; // Tamanho do conjunto a ser utilizado
+    final static MSCLMetric metricMSCL = MSCLMetric.Disable; // Métrica de ordenação
+    final static boolean metricMSCLMinToMax = false; // Ordem da métrica Máx = false e Min = true
+
     final static boolean orderByOcupation = false;
 
-	final static ModulationLevelType[] mudulationLevelType = {
+	final static ModulationLevelType[] mudulationLevelType = { //Formato de modulação, ordenado do maior ao menor
 		//ModulationLevelType.SIXTYFOUR_QAM,
 		//ModulationLevelType.THIRTYTWO_QAM,
 		//ModulationLevelType.SIXTEEN_QAM,
@@ -57,7 +57,7 @@ public class ParametersSimulation{
 		//ModulationLevelType.FOUR_QAM,
     };
 
-    final static String pathToSaveResults = "D:\\ProgrammingFiles\\ReportsOpticalNetworkSimulator\\";
+    final static String pathToSaveResults = "D:\\ProgrammingFiles\\ReportsOpticalNetworkSimulator\\"; // Pasta onde serão armazenadas os relatórios da simulação. Em caso da utilização no sistema linux é necessário aterar a classe CreateFolder.java 
 
     public static double getMinLoadNetwork() {
         return minLoadNetwork;

@@ -1,7 +1,7 @@
 package src.GeneticAlgorithmMultiMSCL;
 
 public class ConfigMSCL {
-    public static final int populationCounts = 50;
+    public static final int populationCounts = 40;
 
     public static final int numberOfNodes = 14;
 
@@ -9,9 +9,9 @@ public class ConfigMSCL {
     public static final double crossoverChance = 0.5;
     public static final double mutationChance = 0.01;
     public static final int numberOfCompetitors = 2;
-    public static final int maxGenerations = 600;
+    public static final int maxGenerations = 500;
     public static final int maxNoImprovementCount = 150;
-    public final static double networkLoadGATraining = 280;
+    public final static double networkLoadGATraining = 90;
 
     public static String printParameters() {
 

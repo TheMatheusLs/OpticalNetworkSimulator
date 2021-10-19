@@ -11,16 +11,16 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 260;
-    final static double maxLoadNetwork = 300;
-    final static int numberOfPointsLoadNetwork = 5;
+    final static double minLoadNetwork = 90;
+    final static double maxLoadNetwork = 90;
+    final static int numberOfPointsLoadNetwork = 1;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
-    final static int numberOfSlotsPerLink = 128;
-    final static long maxNumberOfRequisitions = (long) 1e6;
+    final static int numberOfSlotsPerLink = 64;
+    final static long maxNumberOfRequisitions = (long) 1e5;
     final static int maxNumberOfBlockedRequests = 500;
 
-    final static int kShortestRoutes = 2;
+    final static int kShortestRoutes = 1;
     
     final static int numberOfPolarizations = 2;
     final static int guardBandSize = 0;
@@ -35,7 +35,7 @@ public class ParametersSimulation{
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
-    final static GAOption GAOptionType = GAOption.GADisabled;
+    final static GAOption GAOptionType = GAOption.GAMSCL;
     final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
@@ -47,7 +47,7 @@ public class ParametersSimulation{
     final static MSCLMetric metricMSCL = MSCLMetric.Disable;
     final static boolean metricMSCLMinToMax = false;
     
-    final static boolean orderByOcupation = true;
+    final static boolean orderByOcupation = false;
 
 	final static ModulationLevelType[] mudulationLevelType = {
 		//ModulationLevelType.SIXTYFOUR_QAM,

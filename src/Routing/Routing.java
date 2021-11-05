@@ -619,17 +619,25 @@ public class Routing {
         List<Route> routeListAux = new ArrayList<Route>();
         
         for (Route route : routeSolution) {
-            routeListAux.add(route);
+           routeListAux.add(route);
         }
 
         while (routeListAux.size() > 0){
             
             int minValue = Integer.MAX_VALUE;
+            int selectKRouteID = -1;
             Route auxRoute = null;
             for (Route route : routeListAux) {
                 if ( route.getSlotOcupationValue() < minValue){
                     minValue = route.getSlotOcupationValue();
                     auxRoute = route;
+                    selectKRouteID = route.getK();
+                } else {
+                    if (( route.getSlotOcupationValue() == minValue) && selectKRouteID > route.getK()){
+                        minValue = route.getSlotOcupationValue();
+                        auxRoute = route;
+                        selectKRouteID = route.getK();
+                    }
                 }
             }
 

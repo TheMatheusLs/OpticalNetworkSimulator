@@ -32,6 +32,7 @@ public class MSCL {
     List<Route> routesOD;
     int bitRate;
     int bestIndexMSCL;
+    int selectKRouteID;
     private long cycles;
 
     public MSCL(List<Route> routesOD, int bitRate){
@@ -39,6 +40,7 @@ public class MSCL {
         this.slotsMSCL = new ArrayList<List<Integer>>();
         this.bitRate = bitRate;
         this.bestIndexMSCL = 0;
+        this.selectKRouteID = -1;
         this.cycles = 0;
     }
 
@@ -83,11 +85,16 @@ public class MSCL {
 
         for (int index = 0; index < this.routesOD.size(); index++){
 
-            //this.cycles++;
-
-            if (minValue > valuesLostCapacity.get(index)){
+            if (minValue > valuesLostCapacity.get(index)){ // Se for igual, escolher a menor rota
                 minValue = valuesLostCapacity.get(index);
                 this.bestIndexMSCL = index;
+                this.selectKRouteID = this.routesOD.get(this.bestIndexMSCL).getK();
+            } else {
+                if ((minValue == valuesLostCapacity.get(index)) && this.selectKRouteID > this.routesOD.get(index).getK()) { // Se for igual, escolher a menor rota
+                    minValue = valuesLostCapacity.get(index);
+                    this.bestIndexMSCL = index;
+                    this.selectKRouteID = this.routesOD.get(this.bestIndexMSCL).getK();
+                }
             }
         }
 

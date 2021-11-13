@@ -208,6 +208,42 @@ public class WorldHelper {
             List<Boolean> sequenceOfBitsGenesOffSpringA = new ArrayList<Boolean>();
             List<Boolean> sequenceOfBitsGenesOffSpringB = new ArrayList<Boolean>();
 
+            if (randomGA.nextDouble() < ConfigMSCL.crossoverChance){
+                for (int bitGeneIndex = 0; bitGeneIndex < individualA.chromosome.get(geneIndex).bitsGenes.size(); bitGeneIndex++){
+                    Boolean bitGeneA = individualA.chromosome.get(geneIndex).bitsGenes.get(bitGeneIndex);
+                    Boolean bitGeneB = individualB.chromosome.get(geneIndex).bitsGenes.get(bitGeneIndex);
+                    sequenceOfBitsGenesOffSpringA.add(bitGeneA);
+                    sequenceOfBitsGenesOffSpringB.add(bitGeneB);
+                }
+            } else {
+                for (int bitGeneIndex = 0; bitGeneIndex < individualA.chromosome.get(geneIndex).bitsGenes.size(); bitGeneIndex++){
+                    Boolean bitGeneA = individualA.chromosome.get(geneIndex).bitsGenes.get(bitGeneIndex);
+                    Boolean bitGeneB = individualB.chromosome.get(geneIndex).bitsGenes.get(bitGeneIndex);
+                    sequenceOfBitsGenesOffSpringA.add(bitGeneB);
+                    sequenceOfBitsGenesOffSpringB.add(bitGeneA);
+                }
+            }
+            
+            int source = individualA.chromosome.get(geneIndex).source;
+            int destination = individualA.chromosome.get(geneIndex).destination;
+
+            sequenceOfGenesOffSpringA.add(new GeneMSCL(sequenceOfBitsGenesOffSpringA, source, destination));
+            sequenceOfGenesOffSpringB.add(new GeneMSCL(sequenceOfBitsGenesOffSpringB, source, destination));
+        }
+
+        return new IndividualMSCL[]{new IndividualMSCL(sequenceOfGenesOffSpringA), new IndividualMSCL(sequenceOfGenesOffSpringB)};
+    }
+
+    public static IndividualMSCL[] DoCrossoverUniforme1(IndividualMSCL individualA, IndividualMSCL individualB, Random randomGA){
+        List<GeneMSCL> sequenceOfGenesOffSpringA = new ArrayList<GeneMSCL>();
+        List<GeneMSCL> sequenceOfGenesOffSpringB = new ArrayList<GeneMSCL>();
+
+        //Para cada gene
+        for (int geneIndex = 0; geneIndex < individualA.chromosome.size(); geneIndex++){
+
+            List<Boolean> sequenceOfBitsGenesOffSpringA = new ArrayList<Boolean>();
+            List<Boolean> sequenceOfBitsGenesOffSpringB = new ArrayList<Boolean>();
+
             for (int bitGeneIndex = 0; bitGeneIndex < individualA.chromosome.get(geneIndex).bitsGenes.size(); bitGeneIndex++){
                 
                 Boolean bitGeneA = individualA.chromosome.get(geneIndex).bitsGenes.get(bitGeneIndex);

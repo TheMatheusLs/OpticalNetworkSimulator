@@ -11,16 +11,16 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 260;
-    final static double maxLoadNetwork = 260;
+    final static double minLoadNetwork = 90;
+    final static double maxLoadNetwork = 90;
     final static int numberOfPointsLoadNetwork = 1;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
-    final static int numberOfSlotsPerLink = 128;
-    final static long maxNumberOfRequisitions = (long) 1e6;
+    final static int numberOfSlotsPerLink = 64;
+    final static long maxNumberOfRequisitions = (long) 1e5;
     final static int maxNumberOfBlockedRequests = 500;
 
-    final static int kShortestRoutes = 3;
+    final static int kShortestRoutes = 1;
     
     final static int numberOfPolarizations = 2; // Número de polarização
     final static int guardBandSize = 0; 
@@ -28,14 +28,14 @@ public class ParametersSimulation{
     final static int mainSeed = 42; // Semente aleátoria principal
     
     final static TopologyType topologyType = TopologyType.NSFNet;
-    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado;
+    final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLSequencial;
     final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
     final static LinkCostType linkCostType = LinkCostType.Hops;
     final static int[] trafficOption = new int[]{100, 200, 400};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
     final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
-    final static GAOption GAOptionType = GAOption.GADisabled;
+    final static GAOption GAOptionType = GAOption.GAMSCL;
     final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
     final static CallRequestType callRequestType = CallRequestType.Unidirectional;
@@ -47,7 +47,7 @@ public class ParametersSimulation{
     final static MSCLMetric metricMSCL = MSCLMetric.Disable; // Métrica de ordenação
     final static boolean metricMSCLMinToMax = false; // Ordem da métrica Máx = false e Min = true
 
-    final static boolean orderByOcupation = true;
+    final static boolean orderByOcupation = false;
 
 	final static ModulationLevelType[] mudulationLevelType = { //Formato de modulação, ordenado do maior ao menor
 		//ModulationLevelType.SIXTYFOUR_QAM,

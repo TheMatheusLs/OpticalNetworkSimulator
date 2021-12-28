@@ -186,7 +186,11 @@ public class Topology {
                         if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.Abilene)){
                             return AbileneDimention.getLength();
                         } else {
-                            throw new Exception("Topologia inválida!");
+                            if (ParametersSimulation.getTopologyType().equals(ParametersSimulation.TopologyType.USANet)){
+                                return USANETDimention.getLength();
+                            } else {
+                                throw new Exception("Topologia inválida!");
+                            }
                         }
                     }
                 }

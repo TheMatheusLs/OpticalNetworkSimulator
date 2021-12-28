@@ -11,9 +11,9 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 120;
-    final static double maxLoadNetwork = 130;
-    final static int numberOfPointsLoadNetwork = 2;
+    final static double minLoadNetwork = 280;
+    final static double maxLoadNetwork = 280;
+    final static int numberOfPointsLoadNetwork = 1;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
     final static int numberOfSlotsPerLink = 128;
@@ -27,7 +27,7 @@ public class ParametersSimulation{
 
     final static int mainSeed = 42; // Semente aleátoria principal
     
-    final static TopologyType topologyType = TopologyType.Abilene;
+    final static TopologyType topologyType = TopologyType.USANet;
     final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado;
     final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
     final static LinkCostType linkCostType = LinkCostType.Hops;
@@ -210,7 +210,8 @@ public class ParametersSimulation{
         Finland,
         Simple,
         SimpleSquare,
-        Abilene;
+        Abilene,
+        USANet;
     }
 
     public enum RoutingAlgorithmType{

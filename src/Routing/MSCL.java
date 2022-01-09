@@ -292,7 +292,7 @@ public class MSCL {
                     List<Apeture> apetureAfectInIRoute = getApetures(iRoute, minSlot, maxSlot);
 
                     if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
-                        possibleSlotsByRoute = iRoute.getSizeSlotTypeByBitrate();
+                        possibleSlotsByRoute = route.getSizeSlotTypeByBitrate();
                     } else {
                         possibleSlotsByRoute = this.getSizeSlotByBitrate();
                     }

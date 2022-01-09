@@ -288,10 +288,18 @@ public class Simulation {
 
             if (route != null){
 
-                callRequest.setModulationType(ParametersSimulation.getMudulationLevelType()[0]);
-                
-                final int reqNumbOfSlots = Function.getNumberSlots(callRequest.getModulationType(), callRequest.getBitRate());
-				
+                int reqNumbOfSlots = -90000;
+
+                if (ParametersSimulation.getPhysicalLayerOption().equals(PhysicalLayerOption.Enabled)){
+                    int bitRateIndex = Function.getBitRateIndex(bitRate);
+    
+        
+                    reqNumbOfSlots = route.getNumberOfSlotsByBitRate(bitRateIndex);
+                } else {
+                    reqNumbOfSlots = Function.getNumberSlots(ParametersSimulation.getMudulationLevelType()[0], bitRate);
+                    callRequest.setModulationType(ParametersSimulation.getMudulationLevelType()[0]);
+                }
+
                 callRequest.setRequiredNumberOfSlots(reqNumbOfSlots);
 
                 if (ParametersSimulation.getSpectralAllocationAlgorithmType().equals(ParametersSimulation.SpectralAllocationAlgorithmType.FirstFit)){

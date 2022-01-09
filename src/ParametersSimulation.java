@@ -11,34 +11,34 @@ import src.Types.ModulationLevelType;
  */
 public class ParametersSimulation{
 
-    final static double minLoadNetwork = 280;
-    final static double maxLoadNetwork = 280;
-    final static int numberOfPointsLoadNetwork = 1;
+    final static double minLoadNetwork = 55;
+    final static double maxLoadNetwork = 75;
+    final static int numberOfPointsLoadNetwork = 5;
     final static int numberOfSimulationsPerLoadNetwork = 1;
 
-    final static int numberOfSlotsPerLink = 128;
-    final static long maxNumberOfRequisitions = (long) 1e6;
-    final static int maxNumberOfBlockedRequests = 500;
+    final static int numberOfSlotsPerLink = 64;
+    final static long maxNumberOfRequisitions = (long) 1e5;
+    final static int maxNumberOfBlockedRequests = 1000;
 
     final static int kShortestRoutes = 3;
     
-    final static int numberOfPolarizations = 2; // Número de polarização
+    final static int numberOfPolarizations = 1; // Número de polarização
     final static int guardBandSize = 0; 
 
     final static int mainSeed = 42; // Semente aleátoria principal
     
-    final static TopologyType topologyType = TopologyType.USANet;
+    final static TopologyType topologyType = TopologyType.Finland;
     final static RoutingAlgorithmType routingAlgorithmType = RoutingAlgorithmType.MSCLCombinado;
     final static SpectralAllocationAlgorithmType spectralAllocationAlgorithmType = SpectralAllocationAlgorithmType.MSCL;
     final static LinkCostType linkCostType = LinkCostType.Hops;
-    final static int[] trafficOption = new int[]{100, 200, 400};
+    final static int[] trafficOption = new int[]{50, 75, 100, 200, 300};
     final static ResourceAllocationOption resourceAllocationOption = ResourceAllocationOption.RSA;
-    final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Disabled;
+    final static PhysicalLayerOption physicalLayerOption = PhysicalLayerOption.Enabled;
     final static RSAOrder RSAOrderType = RSAOrder.Disable;
     final static GAOption GAOptionType = GAOption.GADisabled;
     final static StopCriteria stopCriteria = StopCriteria.TotalCallRequest;
     final static RandomGeneration randomGeneration = RandomGeneration.PseudoRandomGeneration;
-    final static CallRequestType callRequestType = CallRequestType.Unidirectional;
+    final static CallRequestType callRequestType = CallRequestType.Bidirectional;
 
     final static DebugOptions debugOptions = DebugOptions.Disable; // Debug
     
@@ -50,11 +50,11 @@ public class ParametersSimulation{
     final static boolean orderByOcupation = false;
 
 	final static ModulationLevelType[] mudulationLevelType = { //Formato de modulação, ordenado do maior ao menor
-		//ModulationLevelType.SIXTYFOUR_QAM,
-		//ModulationLevelType.THIRTYTWO_QAM,
-		//ModulationLevelType.SIXTEEN_QAM,
+		ModulationLevelType.SIXTYFOUR_QAM,
+		ModulationLevelType.THIRTYTWO_QAM,
+		ModulationLevelType.SIXTEEN_QAM,
         ModulationLevelType.EIGHT_QAM,
-		//ModulationLevelType.FOUR_QAM,
+		ModulationLevelType.FOUR_QAM,
     };
 
     final static String pathToSaveResults = "D:\\ProgrammingFiles\\ReportsOpticalNetworkSimulator\\"; // Pasta onde serão armazenadas os relatórios da simulação. Em caso da utilização no sistema linux é necessário aterar a classe CreateFolder.java 
